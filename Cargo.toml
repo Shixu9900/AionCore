@@ -27,6 +27,8 @@ members = [
     "crates/aionui-sidebar",
     "crates/aionui-cron",
     "crates/aionui-assistant",
+    "crates/aionui-records-review",
+    "crates/aionui-documents",
     "crates/aionui-app",
 ]
 
@@ -63,6 +65,8 @@ aionui-project = { path = "crates/aionui-project" }
 aionui-sidebar = { path = "crates/aionui-sidebar" }
 aionui-cron = { path = "crates/aionui-cron" }
 aionui-assistant = { path = "crates/aionui-assistant" }
+aionui-records-review = { path = "crates/aionui-records-review" }
+aionui-documents = { path = "crates/aionui-documents" }
 aionui-app = { path = "crates/aionui-app" }
 
 aion-agent = { git = "https://github.com/iOfficeAI/aionrs.git", tag = "v0.2.11" }
@@ -71,6 +75,7 @@ aion-types = { git = "https://github.com/iOfficeAI/aionrs.git", tag = "v0.2.11" 
 aion-protocol = { git = "https://github.com/iOfficeAI/aionrs.git", tag = "v0.2.11" }
 aion-config = { git = "https://github.com/iOfficeAI/aionrs.git", tag = "v0.2.11" }
 aion-mcp = { git = "https://github.com/iOfficeAI/aionrs.git", tag = "v0.2.11" }
+aion-tools = { path = "vendor/aion-tools" }
 
 # Core framework
 tokio = { version = "1", features = ["full"] }
@@ -212,6 +217,11 @@ proptest = "1"
 getrandom = "0.2"
 hex = "0.4"
 libc = "0.2"
+
+# The desktop assistant uses this copy of aion-tools so file tools stay inside
+# the project. aion-agent still comes from the v0.2.11 git tag.
+[patch."https://github.com/iOfficeAI/aionrs.git"]
+aion-tools = { path = "vendor/aion-tools" }
 
 # Shrink target/debug: minimal debuginfo, sidecar files, no incremental cache.
 [profile.dev]

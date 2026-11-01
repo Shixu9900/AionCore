@@ -12,6 +12,26 @@ use super::*;
 use crate::agent_task::IAgentTask;
 use crate::protocol::events::FinishEventData;
 
+#[test]
+fn scoped_prompt_defines_履历_as_component_history() {
+    let prompt = scoped_system_prompt(None).expect("scope note");
+    assert!(prompt.contains("履历"));
+    assert!(prompt.contains("component"));
+    let merged = scoped_system_prompt(Some("keep me".into())).expect("merged");
+    assert!(merged.starts_with("keep me"));
+    assert!(merged.contains("workspace"));
+}
+
+#[test]
+fn turn_roots_are_the_workspace_and_attached_files() {
+    let roots = turn_file_roots("/proj", &["/drop/41744.pdf".into(), String::new()]);
+    assert_eq!(
+        roots,
+        vec![PathBuf::from("/proj"), PathBuf::from("/drop/41744.pdf")]
+    );
+    assert!(turn_file_roots("", &[]).is_empty());
+}
+
 async fn assert_no_stop_signal(agent: &AionrsAgentManager) {
     let notified = agent.cancel_notify.notified();
     tokio::pin!(notified);

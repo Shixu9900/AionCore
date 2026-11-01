@@ -1,0 +1,18 @@
+[package]
+name = "aionui-records-review"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+aionui-api-types.workspace = true
+aionui-common.workspace = true
+axum.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+tower.workspace = true
+http-body-util.workspace = true

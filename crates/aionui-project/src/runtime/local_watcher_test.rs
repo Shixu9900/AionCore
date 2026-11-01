@@ -36,6 +36,22 @@ async fn saw_change(rx: &mut UnboundedReceiver<RawEvent>, canonical: &str, child
 }
 
 #[tokio::test]
+async fn watch_emits_changed_on_nested_grandchild_create() {
+    let dir = tempdir().unwrap();
+    let nested = dir.path().join("records").join("certs");
+    std::fs::create_dir_all(&nested).unwrap();
+    let (watcher, mut rx) = LocalWatcher::new().unwrap();
+    let c = canon(dir.path());
+    watcher.watch(c.as_str()).unwrap();
+    tokio::time::sleep(Duration::from_millis(150)).await;
+    std::fs::write(nested.join("8130.pdf"), b"x").unwrap();
+    assert!(
+        saw_change(&mut rx, c.as_str(), "8130.pdf", Duration::from_secs(5)).await,
+        "a recursive watch on the project folder must see a file created two levels down"
+    );
+}
+
+#[tokio::test]
 async fn watch_emits_changed_on_child_create() {
     let dir = tempdir().unwrap();
     let (watcher, mut rx) = LocalWatcher::new().unwrap();

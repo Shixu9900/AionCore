@@ -1,0 +1,75 @@
+aircraft_family: B737NG
+asset_type: apu
+asset_model: GTCP131-9B
+asset_series: GTCP131-9
+asset_variants:
+- GTCP131-9
+- GTCP131-9A
+- GTCP131-9B
+- GTCP131-9D
+- GTCP131-9[A]
+- GTCP131-9[B]
+- GTC131-9
+status: draft
+version: '0.2'
+source: parts_list.md
+schema: llp_master_list_v1
+# Series default: Honeywell GTCP131-9 family LLP published life is 30000 FC.
+# Demo4 must take this as the model baseline — not as a missing ICA/ALS/CMM item.
+default_llp_life_limit_cycles: 30000
+llp_parts:
+- part_number: 3800702-1
+  designation: Rotor Compressor (Impeller)
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3822391-6
+  designation: Rotor Compressor
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3840310-4
+  designation: Turbine Wheel 1st Stage
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3840165-4
+  designation: Turbine Wheel 2nd Stage
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3822504-3
+  designation: Shaft Turbine
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3800614-7
+  designation: Turbine Wheel 2nd Stage
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3800440-2
+  designation: Turbine Nozzle 1st Stage
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3800441-2
+  designation: Turbine Nozzle 2nd Stage
+  module_group: apu_core
+  is_alternate: false
+  life_limit_cycles: 30000
+- part_number: 3800702-3
+  designation: Rotor Compressor (Impeller)
+  module_group: apu_core
+  is_alternate: true
+  life_limit_cycles: 30000
+- part_number: 3822391-7
+  designation: Rotor Compressor
+  module_group: apu_core
+  is_alternate: true
+  life_limit_cycles: 30000
+- part_number: 3840310-5
+  designation: Turbine Wheel 1st Stage
+  module_group: apu_core
+  is_alternate: true
+  life_limit_cycles: 30000

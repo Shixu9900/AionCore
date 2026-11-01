@@ -1,8 +1,8 @@
-//! `LocalWatcher` — `file:` [`Watcher`] backed by `notify` (non-recursive).
+//! `LocalWatcher` — `file:` [`Watcher`] backed by `notify` (recursive).
 //!
 //! One shared `RecommendedWatcher` instance backs all watches so macOS uses a
 //! single FSEvents stream/thread (O(1) regardless of watch count). Each
-//! `watch()` registers a directory `NonRecursive`; the shared callback maps raw
+//! `watch()` registers a directory `Recursive`; the shared callback maps raw
 //! `notify` events to [`RawEvent`]s (via [`super::watcher::map_event`]) and
 //! pushes them onto the out channel returned by [`LocalWatcher::new`].
 //!
@@ -38,7 +38,7 @@ struct WatchEntry {
 /// back to the same lexical identity. Shared with the event callback.
 type Watched = Arc<Mutex<HashMap<String, WatchEntry>>>;
 
-/// Local-disk non-recursive watcher for the `file:` scheme.
+/// Local-disk recursive watcher for the `file:` scheme.
 pub(crate) struct LocalWatcher {
     inner: Mutex<RecommendedWatcher>,
     watched: Watched,
@@ -68,19 +68,15 @@ fn canonical_of(path: &Path) -> Option<String> {
 /// canonical against the watched keys; the returned order is self-then-parent.
 fn resolve_owner(watched: &HashMap<String, WatchEntry>, path: &Path) -> Vec<String> {
     let mut owners = Vec::new();
-    // The path itself, when it is a watched directory.
-    if let Some(c) = canonical_of(path)
-        && let Some(entry) = watched.get(&c)
-    {
-        owners.push(entry.lexical.clone());
-    }
-    // The path's parent — the directory whose listing contains this entry.
-    if let Some(parent) = path.parent()
-        && let Some(c) = canonical_of(parent)
-        && let Some(entry) = watched.get(&c)
-        && !owners.contains(&entry.lexical)
-    {
-        owners.push(entry.lexical.clone());
+    let mut current = Some(path);
+    while let Some(node) = current {
+        if let Some(c) = canonical_of(node)
+            && let Some(entry) = watched.get(&c)
+            && !owners.contains(&entry.lexical)
+        {
+            owners.push(entry.lexical.clone());
+        }
+        current = node.parent();
     }
     owners
 }
@@ -129,7 +125,7 @@ impl Watcher for LocalWatcher {
         self.inner
             .lock()
             .unwrap()
-            .watch(&path, RecursiveMode::NonRecursive)
+            .watch(&path, RecursiveMode::Recursive)
             .map_err(|e| FsError::Io {
                 uri: canonical.to_owned(),
                 message: e.to_string(),

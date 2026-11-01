@@ -36,6 +36,8 @@ use aionui_file::file_routes;
 use aionui_mcp::mcp_routes;
 use aionui_office::{office_proxy_routes, office_routes};
 use aionui_project::project_routes;
+use aionui_documents::{DocumentState, DocumentStore, MinerULifecycle, RoutingTable, document_routes};
+use aionui_records_review::records_review_routes;
 use aionui_realtime::{NoopMessageRouter, WebSocketManager, WsHandlerState, ws_upgrade_handler};
 use aionui_shell::shell_routes;
 use aionui_sidebar::sidebar_routes;
@@ -57,6 +59,7 @@ use super::trace::with_access_log;
 pub struct RouterRuntime {
     pub client_pref_service: ClientPrefService,
     pub team_service: Arc<TeamSessionService>,
+    pub mineru: Arc<MinerULifecycle>,
 }
 
 async fn forward_event_bus_to_websocket(
@@ -176,6 +179,8 @@ pub async fn create_router_with_runtime(services: &AppServices) -> Result<(Route
         None => fs_router,
     };
     let ws_state = build_ws_state(services, inbound_router);
+    let mineru = MinerULifecycle::shared(services.data_dir.clone());
+    mineru.reap_orphans().await;
     let router = create_router_with_all_state(services, states, ws_state);
     tracing::info!(
         elapsed_ms = boot.elapsed().as_millis(),
@@ -186,6 +191,7 @@ pub async fn create_router_with_runtime(services: &AppServices) -> Result<(Route
         RouterRuntime {
             client_pref_service,
             team_service,
+            mineru,
         },
     ))
 }
@@ -311,6 +317,17 @@ pub fn create_router_with_all_state(services: &AppServices, states: ModuleStates
     let sidebar_authenticated =
         sidebar_routes(states.sidebar).route_layer(from_fn_with_state(auth_mw_state.clone(), auth_middleware));
 
+    let records_review_authenticated =
+        records_review_routes().route_layer(from_fn_with_state(auth_mw_state.clone(), auth_middleware));
+
+    let document_authenticated = document_routes(DocumentState {
+        store: DocumentStore::new(services.database.pool().clone()),
+        lifecycle: MinerULifecycle::shared(services.data_dir.clone()),
+        routing: RoutingTable::default(),
+        desktop: services.local,
+    })
+    .route_layer(from_fn_with_state(auth_mw_state.clone(), auth_middleware));
+
     // MCP routes protected by auth middleware
     let mcp_authenticated =
         mcp_routes(states.mcp).route_layer(from_fn_with_state(auth_mw_state.clone(), auth_middleware));
@@ -408,6 +425,8 @@ pub fn create_router_with_all_state(services: &AppServices, states: ModuleStates
         .merge(file_authenticated)
         .merge(project_authenticated)
         .merge(sidebar_authenticated)
+        .merge(records_review_authenticated)
+        .merge(document_authenticated)
         .merge(mcp_authenticated)
         .merge(extension_authenticated)
         .merge(hub_authenticated)

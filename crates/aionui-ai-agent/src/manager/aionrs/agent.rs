@@ -14,6 +14,7 @@ use aion_config::config::{CliArgs, Config, McpServerConfig, ProviderType};
 use aion_mcp::manager::McpManager;
 use aion_protocol::commands::{ApprovalScope, SessionMode};
 use aion_protocol::{ToolApprovalManager, ToolApprovalResult};
+use aion_tools::scope;
 use aionui_api_types::{
     AcpConfigOptionDto, AcpConfigSelectOptionDto, AgentModeResponse, ConfigOptionConfirmation,
     GetConfigOptionsResponse, SetConfigOptionResponse, SlashCommandItem,
@@ -162,6 +163,9 @@ impl AionrsAgentManager {
             image_input_source = if image_input_override.is_some() { "provider_settings" } else { "catalog" },
             "Resolved image input capability for Aionrs model"
         );
+        // A missing task-local scope must refuse file tools. Set once for this process.
+        scope::require_scope();
+        let system_prompt = scoped_system_prompt(config_extra.system_prompt.clone());
         let final_input_dump = config_extra
             .prompt_dump_dir
             .clone()
@@ -170,7 +174,7 @@ impl AionrsAgentManager {
                 provider: config_extra.provider.clone(),
                 model: config_extra.model.clone(),
                 base_url: config_extra.base_url.clone(),
-                system_prompt: config_extra.system_prompt.clone(),
+                system_prompt: system_prompt.clone(),
                 session_mode: config_extra.session_mode.clone(),
                 skills: config_extra.skills.clone(),
                 mcp_servers: config_extra.extra_mcp_servers.clone(),
@@ -186,7 +190,7 @@ impl AionrsAgentManager {
             max_turns: config_extra.max_turns,
             max_tool_call_malformed_turns: config_extra.max_tool_call_malformed_turns,
             max_tool_call_failure_turns: config_extra.max_tool_call_failure_turns,
-            system_prompt: config_extra.system_prompt.clone(),
+            system_prompt: system_prompt.clone(),
             profile: None,
             auto_approve: config_extra.session_mode.as_deref() == Some("yolo"),
             thinking: None,
@@ -423,17 +427,21 @@ impl IAgentTask for AionrsAgentManager {
         let mut engine = self.engine.lock().await;
         engine.set_next_turn_id(Some(turn_anchor));
 
-        let result = tokio::select! {
-            res = engine.run_with_blocks(content_blocks, &data.msg_id) => Some(res),
-            _ = self.cancel_notify.notified() => {
-                info!(
-                    conversation_id = %self.runtime.conversation_id(),
-                    "Aionrs engine.run() cancelled by stop signal"
-                );
-                engine.abort_current_turn("Tool execution canceled by user");
-                None
+        let roots = turn_file_roots(self.workspace(), &data.files);
+        let result = scope::with_roots(roots, async {
+            tokio::select! {
+                res = engine.run_with_blocks(content_blocks, &data.msg_id) => Some(res),
+                _ = self.cancel_notify.notified() => {
+                    info!(
+                        conversation_id = %self.runtime.conversation_id(),
+                        "Aionrs engine.run() cancelled by stop signal"
+                    );
+                    engine.abort_current_turn("Tool execution canceled by user");
+                    None
+                }
             }
-        };
+        })
+        .await;
 
         let elapsed_ms = now_ms() - started_at;
         self.runtime.bump_activity();
@@ -616,6 +624,28 @@ impl AionrsAgentManager {
     pub async fn get_slash_commands(&self) -> Result<Vec<SlashCommandItem>, AgentError> {
         Ok(self.slash_commands.clone())
     }
+}
+
+const SCOPE_NOTE: &str = "履历 means a component's maintenance history inside this project. Do not search or read files outside the current workspace and the files attached to this message.";
+
+fn scoped_system_prompt(existing: Option<String>) -> Option<String> {
+    match existing {
+        Some(text) if !text.is_empty() => Some(format!("{text}\n\n{SCOPE_NOTE}")),
+        _ => Some(SCOPE_NOTE.to_string()),
+    }
+}
+
+fn turn_file_roots(workspace: &str, files: &[String]) -> Vec<PathBuf> {
+    let mut roots = Vec::new();
+    if !workspace.is_empty() {
+        roots.push(PathBuf::from(workspace));
+    }
+    for file in files {
+        if !file.is_empty() {
+            roots.push(PathBuf::from(file));
+        }
+    }
+    roots
 }
 
 const AIONRS_MODE_OPTION_ID: &str = "mode";

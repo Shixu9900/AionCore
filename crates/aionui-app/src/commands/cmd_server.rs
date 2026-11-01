@@ -341,6 +341,7 @@ pub(crate) async fn run_server(
     let conversation_runtime_state = services.conversation_runtime_state.clone();
     let worker_task_manager = services.worker_task_manager.clone();
     let client_pref_service = router_runtime.client_pref_service.clone();
+    let mineru = router_runtime.mineru.clone();
 
     // All initialization is complete and we are about to begin serving. Emit the
     // authoritative readiness marker now (never at bind time) so AionUi can treat
@@ -478,6 +479,9 @@ pub(crate) async fn run_server(
             "idle scanner join timed out; abandoning scanner task",
         ),
     }
+
+    mineru.stop().await;
+    info!(stage = "shutdown.mineru", "shutdown: local parse engine stopped");
 
     // `sqlx::Pool::close()` waits for all checked-out connections to be
     // returned, which is unbounded if a detached task still holds one.

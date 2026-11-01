@@ -1,0 +1,237 @@
+# CFM56-7B Engine LLP Registry Template
+#
+# Source: F7_892747 LLP MTS 20230323.xlsx
+# Source context: Boeing 737-800 No.2 engine, ESN 892747, CFM56-7B26.
+# Extraction scope: LLP identity template only. TSN, CSN, remaining cycles,
+# total hours, total cycles, and event history are intentionally excluded.
+
+aircraft_family: B737NG
+aircraft_variant: 737-800
+asset_type: engine
+asset_model: CFM56-7B
+source_engine_model: CFM56-7B26
+source_engine_serial_number: "892747"
+source_date: "2023-03-23"
+status: draft
+version: "0.1"
+
+llp_parts:
+  - iin: "211"
+    designation: Booster Spool
+    part_number: 340-000-826-0
+    base_part_number: 340-000-826
+    module_group: fan_and_booster
+    life_limit_cycles_by_thrust_rating:
+      7B22: 30000
+      7B24: 30000
+      7B26: 30000
+      7B27: 30000
+
+  - iin: "213"
+    designation: Stage 1 fan disk
+    part_number: 340-000-420-0
+    base_part_number: 340-000-420
+    module_group: fan_and_booster
+    life_limit_cycles_by_thrust_rating:
+      7B22: 30000
+      7B24: 30000
+      7B26: 30000
+      7B27: 30000
+
+  - iin: "221"
+    designation: Fan Shaft
+    part_number: 335-006-414-0
+    base_part_number: 335-006-414
+    module_group: fan
+    life_limit_cycles_by_thrust_rating:
+      7B22: 30000
+      7B24: 30000
+      7B26: 30000
+      7B27: 30000
+
+  - iin: "312"
+    designation: HPC front shaft
+    part_number: 1386M56P03
+    base_part_number: 1386M56P03
+    module_group: high_pressure_compressor
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "313"
+    designation: HPC stage 1/2 spool
+    part_number: 1558M31G07
+    base_part_number: 1558M31G07
+    module_group: high_pressure_compressor
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "314"
+    designation: HPC stage 3 disk
+    part_number: 2116M23P01
+    base_part_number: 2116M23P01
+    module_group: high_pressure_compressor
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "315"
+    designation: HPC stage 4/9 spool
+    part_number: 2048M20G04
+    base_part_number: 2048M20G04
+    module_group: high_pressure_compressor
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "316"
+    designation: HPC rear air seal
+    part_number: 2116M25P01
+    base_part_number: 2116M25P01
+    module_group: high_pressure_compressor
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "521"
+    designation: HPT front shaft
+    part_number: 2048M21P03
+    base_part_number: 2048M21P03
+    module_group: high_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "522"
+    designation: HPT front air seal
+    part_number: 2116M20P02
+    base_part_number: 2116M20P02
+    module_group: high_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "525"
+    designation: HPT disk
+    part_number: 1498M43P07
+    base_part_number: 1498M43P07
+    module_group: high_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "526"
+    designation: HPT rear shaft
+    part_number: 1864M90P04
+    base_part_number: 1864M90P04
+    module_group: high_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 20000
+      7B24: 20000
+      7B26: 20000
+      7B27: 20000
+
+  - iin: "541"
+    designation: LPT Case
+    part_number: 338-117-404-0
+    base_part_number: 338-117-404
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: N/L
+      7B24: N/L
+      7B26: N/L
+      7B27: N/L
+
+  - iin: "542"
+    designation: LPT stage 1 disk
+    part_number: 336-001-804-0
+    base_part_number: 336-001-804
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000
+
+  - iin: "543"
+    designation: LPT stage 2 disk
+    part_number: 336-001-909-0
+    base_part_number: 336-001-909
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000
+
+  - iin: "544"
+    designation: LPT stage 3 disk
+    part_number: 336-002-006-0
+    base_part_number: 336-002-006
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000
+
+  - iin: "545"
+    designation: LPT stage 4 disk
+    part_number: 336-002-105-0
+    base_part_number: 336-002-105
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000
+
+  - iin: "546"
+    designation: LPT conical support
+    part_number: 338-077-502-0
+    base_part_number: 338-077-502
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000
+
+  - iin: "551"
+    designation: LPT shaft
+    part_number: 340-074-723-0
+    base_part_number: 340-074-723
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000
+
+  - iin: "561"
+    designation: LPT Rear Frame
+    part_number: 340-166-210-0
+    base_part_number: 340-166-210
+    module_group: low_pressure_turbine
+    life_limit_cycles_by_thrust_rating:
+      7B22: 25000
+      7B24: 25000
+      7B26: 25000
+      7B27: 25000

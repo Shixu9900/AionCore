@@ -1,0 +1,782 @@
+aircraft_family: A320 Family
+aircraft_variant: A320-214
+asset_type: landing_gear
+asset_model: A320 landing gear
+source_type: certified_current_landing_gear_llp_status_reports
+source_scope: public LLP identity template only
+status: draft
+version: '0.1'
+extraction_notes:
+- Source PDFs identify the aircraft model as A320-214.
+- 'Only public/common LLP template fields were retained: P/N, component name, gear
+  position, ATA chapter, and life limit cycles.'
+- TSN, CSN, S/N, registration, MSN, operator, current due, remaining cycles, dates,
+  GRN, and report/vendor metadata were intentionally excluded.
+- Records without an explicit LIFE LIMIT value in the source block were not included
+  as LLP template entries.
+llp_parts:
+- part_number: D3214022000200
+  base_part_number: D3214022000200
+  component_name: AFT PINTLE PIN NUT
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201058608'
+  base_part_number: '201058608'
+  component_name: LOCK LINK CENTER PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201058306'
+  base_part_number: '201058306'
+  component_name: LOCK LINK STAY CARDAN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201056909'
+  base_part_number: '201056909'
+  component_name: LOCK LINK STAY CARDAN PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201058611'
+  base_part_number: '201058611'
+  component_name: LOCK LINK UPPER PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201058305'
+  base_part_number: '201058305'
+  component_name: LOWER LOCK LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163301'
+  base_part_number: '201163301'
+  component_name: LOWER SIDESTAY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201581001'
+  base_part_number: '201581001'
+  component_name: MAIN LANDING GEAR ASSEMBLY
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: 201582001-030
+  base_part_number: '201582001'
+  component_name: MAIN LANDING GEAR LEG
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D3215303000800
+  base_part_number: D3215303000800
+  component_name: REAR PINTLE PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '114193641'
+  base_part_number: '114193641'
+  component_name: RETRACTION ACTUATOR CYLINDER
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590913'
+  base_part_number: '201590913'
+  component_name: RETRACTION ACTUATOR GLAND
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '114193604'
+  base_part_number: '114193604'
+  component_name: RETRACTION ACTUATOR NUT
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '114193637'
+  base_part_number: '114193637'
+  component_name: RETRACTION ACTUATOR PIN (MAIN FITTING SIDE)
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '114193610'
+  base_part_number: '114193610'
+  component_name: RETRACTION ACTUATOR PIN (REAR SPAR SIDE)
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '114193603'
+  base_part_number: '114193603'
+  component_name: RETRACTION ACTUATOR PISTON HEAD
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '114193601'
+  base_part_number: '114193601'
+  component_name: RETRACTION ACTUATOR PISTON ROD
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201371304'
+  base_part_number: '201371304'
+  component_name: SHOCK ABSORBER SLIDING TUBE
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201371615'
+  base_part_number: '201371615'
+  component_name: SHOCK ABSORBER UPPER DIAPHRAGM TUBE
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661306'
+  base_part_number: '201661306'
+  component_name: SIDESTAY BANANA LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 2
+    rh_mlg: 2
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661305'
+  base_part_number: '201661305'
+  component_name: SIDESTAY CUFF
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661612'
+  base_part_number: '201661612'
+  component_name: SIDESTAY CUFF PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 2
+    rh_mlg: 2
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201057627'
+  base_part_number: '201057627'
+  component_name: SIDESTAY LOCK LINK LOWER PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163307'
+  base_part_number: '201163307'
+  component_name: SIDESTAY LOWER CARDAN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163945'
+  base_part_number: '201163945'
+  component_name: SIDESTAY LOWER CARDAN NUT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163619'
+  base_part_number: '201163619'
+  component_name: SIDESTAY LOWER CARDAN PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661606'
+  base_part_number: '201661606'
+  component_name: SIDESTAY LOWER PIN (SPRINGS)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661605'
+  base_part_number: '201661605'
+  component_name: SIDESTAY PIN (LOCK LINK/BANANA LINK)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163609'
+  base_part_number: '201163609'
+  component_name: SIDESTAY PIVOT PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661307'
+  base_part_number: '201661307'
+  component_name: SIDESTAY TRIANGULATION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661609'
+  base_part_number: '201661609'
+  component_name: SIDESTAY TRIANGULATION LINK PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163620'
+  base_part_number: '201163620'
+  component_name: SIDESTAY UPPER CARDAN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163944'
+  base_part_number: '201163944'
+  component_name: SIDESTAY UPPER CARDAN NUT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163618'
+  base_part_number: '201163618'
+  component_name: SIDESTAY UPPER CARDAN PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201661607'
+  base_part_number: '201661607'
+  component_name: SIDESTAY UPPER PIN (SPRINGS)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '450239408'
+  base_part_number: '450239408'
+  component_name: STRUT AFT PINTLE SPHERICAL BEARING
+  gear_positions:
+  - lh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201173600'
+  base_part_number: '201173600'
+  component_name: STRUT FWD PINTLE PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201540616'
+  base_part_number: '201540616'
+  component_name: STRUT FWD PINTLE PIN STUB BOLT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 2
+    rh_mlg: 2
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201540302'
+  base_part_number: '201540302'
+  component_name: STRUT LOWER TORQUE LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201160602'
+  base_part_number: '201160602'
+  component_name: STRUT LOWER TORQUE LINK PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201383606'
+  base_part_number: '201383606'
+  component_name: STRUT TORQUE LINK APEX PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201587612'
+  base_part_number: '201587612'
+  component_name: STRUT TORQUE LINK APEX PIN NUT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201540303'
+  base_part_number: '201540303'
+  component_name: STRUT UPPER TORQUE LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201160603'
+  base_part_number: '201160603'
+  component_name: STRUT UPPER TORQUE LINK PIN
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201058310'
+  base_part_number: '201058310'
+  component_name: UPPER LOCK LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201163300'
+  base_part_number: '201163300'
+  component_name: UPPER SIDESTAY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  quantity_by_position:
+    lh_mlg: 1
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201581002'
+  base_part_number: '201581002'
+  component_name: MAIN LANDING GEAR ASSEMBLY
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: 201582002-030
+  base_part_number: '201582002'
+  component_name: MAIN LANDING GEAR LEG
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D3214022000200
+  base_part_number: D3214022000200
+  component_name: REAR PINTLE PIN NUT
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590906'
+  base_part_number: '201590906'
+  component_name: RETRACTION ACTUATOR CYLINDER
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590910'
+  base_part_number: '201590910'
+  component_name: RETRACTION ACTUATOR NUT
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590900'
+  base_part_number: '201590900'
+  component_name: RETRACTION ACTUATOR PIN (MAIN FITTING SIDE)
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590901'
+  base_part_number: '201590901'
+  component_name: RETRACTION ACTUATOR PIN (REAR SPAR SIDE)
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590909'
+  base_part_number: '201590909'
+  component_name: RETRACTION ACTUATOR PISTON HEAD
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201590908'
+  base_part_number: '201590908'
+  component_name: RETRACTION ACTUATOR PISTON ROD
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201042106'
+  base_part_number: '201042106'
+  component_name: STRUT AFT PINTLE SPHERICAL BEARING
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: '201540309'
+  base_part_number: '201540309'
+  component_name: STRUT MAIN FITTING
+  gear_positions:
+  - rh_mlg
+  quantity_by_position:
+    rh_mlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D67932
+  base_part_number: D67932
+  component_name: FORESTAY CROSS PIN
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65773
+  base_part_number: D65773
+  component_name: FORESTAY LOCK LINK LOWER PIN
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65238
+  base_part_number: D65238
+  component_name: FORESTAY LOWER LINK
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D67928
+  base_part_number: D67928
+  component_name: FORESTAY PIN (LOWER LINK/U-JOINT)
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65616
+  base_part_number: D65616
+  component_name: FORESTAY PIN (UPPER PANEL/STRUCTURE) - NO.1
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65616
+  base_part_number: D65616
+  component_name: FORESTAY PIN (UPPER PANEL/STRUCTURE) - NO.2
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65887
+  base_part_number: D65887
+  component_name: FORESTAY PIN (UPPER PANEL/U-JOINT)
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D59638
+  base_part_number: D59638
+  component_name: FORESTAY UNIVERSAL JOINT
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65237
+  base_part_number: D65237
+  component_name: FORESTAY UPPER PANEL
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D67583
+  base_part_number: D67583
+  component_name: LEG BARREL
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65588-1
+  base_part_number: D65588
+  component_name: LEG HINGE PIN (BARREL/STRUCTURE) - NO.1
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65588-1
+  base_part_number: D65588
+  component_name: LEG HINGE PIN (BARREL/STRUCTURE) - NO.2
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65589-1
+  base_part_number: D65589
+  component_name: LEG PIN
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65599
+  base_part_number: D65599
+  component_name: LEG PIN
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D59635
+  base_part_number: D59635
+  component_name: LOCK LINK LOWER LINK
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D59636-1
+  base_part_number: D59636
+  component_name: LOCK LINK UPPER LINK
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D23757500-8
+  base_part_number: D23757500
+  component_name: NOSE LANDING GEAR ASSEMBLY
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D65519
+  base_part_number: D65519
+  component_name: SHOCK ABSORBER CYLINDER
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D66679
+  base_part_number: D66679
+  component_name: SHOCK ABSORBER SLIDING TUBE
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'
+- part_number: D66680
+  base_part_number: D66680
+  component_name: SHOCK ABSORBER WHEEL AXLE
+  gear_positions:
+  - nlg
+  quantity_by_position:
+    nlg: 1
+  life_limit_cycles: 60000
+  ata_chapter: '32'

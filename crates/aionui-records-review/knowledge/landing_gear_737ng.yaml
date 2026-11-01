@@ -1,0 +1,1906 @@
+aircraft_family: B737NG
+aircraft_variant: 737-800
+asset_type: landing_gear
+asset_model: B737NG landing gear
+source_type: landing_gear_llp_status_excel_reports
+source_scope: public LLP and hard-time template only
+status: draft
+version: '0.1'
+position_sources:
+  lh_mlg:
+    source_file: LH MLG LLP Status.xlsx
+    aircraft_type: B737-800
+    gear_assembly_part_number: 161A1100-67
+    report_title: LEFT MAIN LANDING GEAR LIFE LIMITED PARTS STATUS REPORT
+  nlg:
+    source_file: NLG LLP Status.xlsx
+    aircraft_type: B737-800
+    gear_assembly_part_number: 162A1100-14
+    report_title: NOSE LANDING GEAR LIFE LIMITED PARTS STATUS REPORT
+  rh_mlg:
+    source_file: RH MLG LLP Status.xlsx
+    aircraft_type: B737-800
+    gear_assembly_part_number: 161A1100-68
+    report_title: RIGHT MAIN LANDING GEAR LIFE LIMITED PARTS STATUS REPORT
+extraction_notes:
+- Source files identify aircraft type as B737-800.
+- 'Only public/template fields were retained: item number, description, P/N, base
+  P/N, gear position, ATA chapter, hard life, and overhaul interval.'
+- S/N, TSN, CSN, registration, MSN, installation dates, birth/OH dates, current CSN,
+  remaining FC, remaining days, and next due dates were intentionally excluded.
+- SCRAP rows map to life_limit_cycles; O/H rows map to overhaul_interval_cycles and
+  overhaul_interval_days.
+llp_parts:
+- part_number: 115A1110-3
+  base_part_number: 115A1110
+  descriptions:
+  - AFT BEAM FITTING STAB REAR SPAR LH
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '49'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1150-7
+  base_part_number: 115A1150
+  descriptions:
+  - MLG LWR FITTING STAB LINK SUPPORT LH
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '50'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1151-3
+  base_part_number: 115A1151
+  descriptions:
+  - MLG UPR FITTING STAB LINK SUPPORT LH
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '51'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1211-9
+  base_part_number: 115A1211
+  descriptions:
+  - MLG LWR STABILIZER LWR LINK LH
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '52'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1221-11
+  base_part_number: 115A1221
+  descriptions:
+  - MLG UPR FITTING UPR MLG BEAM LH
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '53'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1310-2
+  base_part_number: 115A1310
+  descriptions:
+  - FUSE PIN OUTBD MLG BEAM ATTACH LH
+  - FUSE PIN OUTBD MLG BEAM ATTACH RH
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '54'
+    rh_mlg: '54'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1320-1
+  base_part_number: 115A1320
+  descriptions:
+  - FUSE PIN STAB LINK SUPPORT FWD UPP
+  - FUSE PIN STAB LINK SUPPORT FWD LWR
+  - FUSE PIN STAB LINK SUPPORT AFT LWR
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '57'
+    rh_mlg: '57'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1610-1
+  base_part_number: 115A1610
+  descriptions:
+  - PIN - HANGER LINK - UPR
+  - PIN - HANGER LINK - LWR
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '59'
+    rh_mlg: '59'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 45000
+  ata_chapter: '32'
+  life_limit_cycles: 45000
+- part_number: 115A5110-3
+  base_part_number: 115A5110
+  descriptions:
+  - LWR ATTACH FITTING LWR STAB REAR SPAR
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '60'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5120-15
+  base_part_number: 115A5120
+  descriptions:
+  - UPR ATTACH FITTING UPR STAB REAR SPAR
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '61'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5211-15
+  base_part_number: 115A5211
+  descriptions:
+  - MLG FWD SUPPORT FWD TRUNNION
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '62'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5240-3
+  base_part_number: 115A5240
+  descriptions:
+  - FWD HOUSING ASSY FWD TRUNNION BEARING
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '63'
+    rh_mlg: '63'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5260-1
+  base_part_number: 115A5260
+  descriptions:
+  - UPPER FUSE PIN FWD TRUNNION SUPPORT
+  - LWR FUSE PIN FWD TRUNNION SUPPORT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '65'
+    rh_mlg: '65'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5310-15
+  base_part_number: 115A5310
+  descriptions:
+  - INBD FITTING INBD MLG BEAM OUTBD SUPPORT
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '66'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5311-15
+  base_part_number: 115A5311
+  descriptions:
+  - MLG FITTING CTR MLG BEAM OUTBD SUPPORT
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '67'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5312-19
+  base_part_number: 115A5312
+  descriptions:
+  - MLG FITTING OUTBD MLG BEAM OUTBD SUPPORT
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '68'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5313-7
+  base_part_number: 115A5313
+  descriptions:
+  - MLG FITTING IDLER LINK SUPPORT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '69'
+    rh_mlg: '69'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 161A1100-67
+  base_part_number: 161A1100
+  descriptions:
+  - MLG COMPONENT INSTALLATION
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '1'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1118-19
+  base_part_number: 161A1118
+  descriptions:
+  - OUTER CYLINDER ASSY
+  gear_positions:
+  - lh_mlg
+  position_item_numbers:
+    lh_mlg: '2'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1126-2
+  base_part_number: 161A1126
+  descriptions:
+  - INNER CYLINDER ASSY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '3'
+    rh_mlg: '3'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1128-2
+  base_part_number: 161A1128
+  descriptions:
+  - PIN, AXLE RETENTION
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '4'
+    rh_mlg: '4'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1130-4
+  base_part_number: 161A1130
+  descriptions:
+  - AXLE ASSY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '5'
+    rh_mlg: '5'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1140-4
+  base_part_number: 161A1140
+  descriptions:
+  - MLG TORSION LINK ASSY, UPPER
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '6'
+    rh_mlg: '6'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1142-4
+  base_part_number: 161A1142
+  descriptions:
+  - MLG TORSION LINK ASSY, LOWER
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '7'
+    rh_mlg: '7'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1146-2
+  base_part_number: 161A1146
+  descriptions:
+  - PIN- UPPER TORSION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '8'
+    rh_mlg: '8'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1147-8
+  base_part_number: 161A1147
+  descriptions:
+  - PIN, LOWER TORSION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '9'
+    rh_mlg: '9'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1150-1
+  base_part_number: 161A1150
+  descriptions:
+  - METERING PIN (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '40'
+    rh_mlg: '40'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1152-2
+  base_part_number: 161A1152
+  descriptions:
+  - TUBE - ORIFICE SUPPORT (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '41'
+    rh_mlg: '41'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1154-1
+  base_part_number: 161A1154
+  descriptions:
+  - GLAND NUT - SHOCK STRUT (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '42'
+    rh_mlg: '42'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1159-1
+  base_part_number: 161A1159
+  descriptions:
+  - SPACER TUBE - SHOCK STRUT (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '43'
+    rh_mlg: '43'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1161-1
+  base_part_number: 161A1161
+  descriptions:
+  - ORIFICE - SHOCK STRUT (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '44'
+    rh_mlg: '44'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1167-5
+  base_part_number: 161A1167
+  descriptions:
+  - BEARING CARRIER HALF - UPR (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '45'
+    rh_mlg: '45'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1167-6
+  base_part_number: 161A1167
+  descriptions:
+  - BEARING CARRIER HALF - LWR (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '46'
+    rh_mlg: '46'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1168-1
+  base_part_number: 161A1168
+  descriptions:
+  - BEARING CARRIER - LWR (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '47'
+    rh_mlg: '47'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1171-1
+  base_part_number: 161A1171
+  descriptions:
+  - RETAINER NUT (MLG)
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '48'
+    rh_mlg: '48'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1188-10
+  base_part_number: 161A1188
+  descriptions:
+  - PIN ASSY, FWD TRUNNION BEARING
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '10'
+    rh_mlg: '10'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1190-2
+  base_part_number: 161A1190
+  descriptions:
+  - PIN, FWD TRUNNION CROSSBOLT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '11'
+    rh_mlg: '11'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1191-1
+  base_part_number: 161A1191
+  descriptions:
+  - PIN, AFT TRUNNION CROSSBOLT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '12'
+    rh_mlg: '12'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1192-4
+  base_part_number: 161A1192
+  descriptions:
+  - PIN ASSY-AFT TRUNNION BEARING
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '13'
+    rh_mlg: '13'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1214-3
+  base_part_number: 161A1214
+  descriptions:
+  - PIN- DAMPER TORSION LINK APEX
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '14'
+    rh_mlg: '14'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1215-1
+  base_part_number: 161A1215
+  descriptions:
+  - NUT- DAMPER TORSION LINK APEX
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '15'
+    rh_mlg: '15'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2101-2
+  base_part_number: 161A2101
+  descriptions:
+  - UPPER SIDE STRUT ASSY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '16'
+    rh_mlg: '16'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2103-8
+  base_part_number: 161A2103
+  descriptions:
+  - LOWER SIDE STRUT ASSY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '17'
+    rh_mlg: '17'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2105-4
+  base_part_number: 161A2105
+  descriptions:
+  - LOCK LINK ASSY- DOWNLOCK LOWER
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '18'
+    rh_mlg: '18'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2107-3
+  base_part_number: 161A2107
+  descriptions:
+  - LOCK LINK ASSY, AFT
+  - LOCK LINK ASSY, FWD
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '19'
+    rh_mlg: '19'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2107-4
+  base_part_number: 161A2107
+  descriptions:
+  - LOCK LINK ASSY, FWD
+  - LOCK LINK ASSY, AFT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '20'
+    rh_mlg: '20'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2111-9
+  base_part_number: 161A2111
+  descriptions:
+  - PIN SIDE STRUT APEX
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '21'
+    rh_mlg: '21'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2112-2
+  base_part_number: 161A2112
+  descriptions:
+  - LWR PIN DOWNLOCK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '22'
+    rh_mlg: '22'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2122-1
+  base_part_number: 161A2122
+  descriptions:
+  - PIN SIDE STRUT TO REACTION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '23'
+    rh_mlg: '23'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2123-1
+  base_part_number: 161A2123
+  descriptions:
+  - PIN, DOWNLOCK TO REACTION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '24'
+    rh_mlg: '24'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2124-1
+  base_part_number: 161A2124
+  descriptions:
+  - PIN APEX DOWNLOCK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '25'
+    rh_mlg: '25'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2318-1
+  base_part_number: 161A2318
+  descriptions:
+  - PIN, DOWNLOCK ACTUATOR
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '26'
+    rh_mlg: '26'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2325-1
+  base_part_number: 161A2325
+  descriptions:
+  - PIN SPRING ASSY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '27'
+    rh_mlg: '27'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2330-2
+  base_part_number: 161A2330
+  descriptions:
+  - PIN,SIDE OF BODY JOINT
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '28'
+    rh_mlg: '28'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2331-1
+  base_part_number: 161A2331
+  descriptions:
+  - PIN SIDE STRUT OUTER CYLINDER
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '29'
+    rh_mlg: '29'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A2332-1
+  base_part_number: 161A2332
+  descriptions:
+  - PIN, REACTION LINK TO TRUNNION
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '30'
+    rh_mlg: '30'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A4100-2
+  base_part_number: 161A4100
+  descriptions:
+  - REACTION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '31'
+    rh_mlg: '31'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A4300-2
+  base_part_number: 161A4300
+  descriptions:
+  - HANGER LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '32'
+    rh_mlg: '32'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A4302-1
+  base_part_number: 161A4302
+  descriptions:
+  - PIN HANGER LINK TO REACTION LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '33'
+    rh_mlg: '33'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A7111-2
+  base_part_number: 161A7111
+  descriptions:
+  - WALKING BEAM ASSY
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '34'
+    rh_mlg: '34'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A7114-2
+  base_part_number: 161A7114
+  descriptions:
+  - RETRACTION LINK WALKING BEAM
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '35'
+    rh_mlg: '35'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A7118-1
+  base_part_number: 161A7118
+  descriptions:
+  - PIN - WALKING BEAM
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '36'
+    rh_mlg: '36'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A7301-1
+  base_part_number: 161A7301
+  descriptions:
+  - PIN ATTACHMENT LINK
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '37'
+    rh_mlg: '37'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A7302-1
+  base_part_number: 161A7302
+  descriptions:
+  - PIN ATTACHMENT RETRACT ACTUATOR
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '38'
+    rh_mlg: '38'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A7305-1
+  base_part_number: 161A7305
+  descriptions:
+  - PIN ATTACHMENT WALKING BEAM
+  gear_positions:
+  - lh_mlg
+  - rh_mlg
+  position_item_numbers:
+    lh_mlg: '39'
+    rh_mlg: '39'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 115A1110-4
+  base_part_number: 115A1110
+  descriptions:
+  - AFT BEAM FITTING STAB REAR SPAR RH
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '49'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1150-8
+  base_part_number: 115A1150
+  descriptions:
+  - MLG LWR FITTING STAB LINK SUPPORT RH
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '50'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1151-4
+  base_part_number: 115A1151
+  descriptions:
+  - MLG UPR FITTING STAB LINK SUPPORT RH
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '51'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1211-14
+  base_part_number: 115A1211
+  descriptions:
+  - MLG LWR STABILIZER LWR LINK RH
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '52'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A1221-12
+  base_part_number: 115A1221
+  descriptions:
+  - MLG UPR FITTING UPR MLG BEAM RH
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '53'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5110-4
+  base_part_number: 115A5110
+  descriptions:
+  - LWR ATTACH FITTING LWR STAB REAR SPAR
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '60'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5120-16
+  base_part_number: 115A5120
+  descriptions:
+  - UPR ATTACH FITTING UPR STAB REAR SPAR
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '61'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5211-16
+  base_part_number: 115A5211
+  descriptions:
+  - MLG FWD SUPPORT FWD TRUNNION
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '62'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5310-16
+  base_part_number: 115A5310
+  descriptions:
+  - INBD FITTING INBD MLG BEAM OUTBD SUPPORT
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '66'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5311-16
+  base_part_number: 115A5311
+  descriptions:
+  - MLG FITTING CTR MLG BEAM OUTBD SUPPORT
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '67'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 115A5312-20
+  base_part_number: 115A5312
+  descriptions:
+  - MLG FITTING OUTBD MLG BEAM OUTBD SUPPORT
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '68'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+- part_number: 161A1100-68
+  base_part_number: 161A1100
+  descriptions:
+  - MLG COMPONENT INSTALLATION
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '1'
+  limit_categories:
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 161A1118-20
+  base_part_number: 161A1118
+  descriptions:
+  - OUTER CYLINDER ASSY
+  gear_positions:
+  - rh_mlg
+  position_item_numbers:
+    rh_mlg: '2'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 21000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 21000
+  overhaul_interval_days: 3650
+- part_number: 162A0301-2
+  base_part_number: 162A0301
+  descriptions:
+  - PIN TRUNNION - LH
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '2'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A0302-2
+  base_part_number: 162A0302
+  descriptions:
+  - PIN TRUNNION - RH
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '3'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1100-14
+  base_part_number: 162A1100
+  descriptions:
+  - NLG COMPONENT INSTALLATION
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '1'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1110-6
+  base_part_number: 162A1110
+  descriptions:
+  - OUTER CYLINDER - NLG
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '4'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1120-8
+  base_part_number: 162A1120
+  descriptions:
+  - INNER CYLINDER - NLG
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '5'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1306-1
+  base_part_number: 162A1306
+  descriptions:
+  - PIN - TORSION LINK UPPER
+  - PIN - TORSION LINK LOWER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '7'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1310-1
+  base_part_number: 162A1310
+  descriptions:
+  - PIN - APEX TORSION LINK
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '8'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1313-2
+  base_part_number: 162A1313
+  descriptions:
+  - TORSION LINK - LOWER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '9'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1315-2
+  base_part_number: 162A1315
+  descriptions:
+  - TORSION LINK - ASSY UPPER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '10'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1404-7
+  base_part_number: 162A1404
+  descriptions:
+  - STEERING COLLAR ASSY
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '11'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1405-12
+  base_part_number: 162A1405
+  descriptions:
+  - STEERING SLEEVE - UPPER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '12'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1406-2
+  base_part_number: 162A1406
+  descriptions:
+  - NUT - STEERING COLLAR
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '26'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1411-1
+  base_part_number: 162A1411
+  descriptions:
+  - PIN STEERING ACTUATOR LH
+  - PIN STEERING ACTUATOR RH
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '14'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1417-12
+  base_part_number: 162A1417
+  descriptions:
+  - STEERING PLATE - LOWER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '15'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1501-2
+  base_part_number: 162A1501
+  descriptions:
+  - CENTERING CAM
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '27'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1503-2
+  base_part_number: 162A1503
+  descriptions:
+  - PIN METERING
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '28'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1507-1
+  base_part_number: 162A1507
+  descriptions:
+  - ORIFICE SUPPORT TUBE
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '29'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1509-1
+  base_part_number: 162A1509
+  descriptions:
+  - CENTERING CAM
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '30'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1510-1
+  base_part_number: 162A1510
+  descriptions:
+  - BEARING CARRIER LWR
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '31'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1511-5
+  base_part_number: 162A1511
+  descriptions:
+  - BEARING CARRIER HALF - UPPER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '32'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1511-6
+  base_part_number: 162A1511
+  descriptions:
+  - BEARING CARRIER HALF - LOWER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '33'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A1513-1
+  base_part_number: 162A1513
+  descriptions:
+  - GLAND NUT - SHOCK STRUT
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '34'
+  limit_categories:
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2101-6
+  base_part_number: 162A2101
+  descriptions:
+  - UPPER DRAG STRUT ASSY
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '16'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2103-2
+  base_part_number: 162A2103
+  descriptions:
+  - DRAG STRUT - LOWER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '17'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2112-2
+  base_part_number: 162A2112
+  descriptions:
+  - FWD LOCK LINK
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '18'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2115-6
+  base_part_number: 162A2115
+  descriptions:
+  - LOCK LINK ASSY - AFT
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '19'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2118-1
+  base_part_number: 162A2118
+  descriptions:
+  - SHAFT LOCK LINK
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '20'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2123-1
+  base_part_number: 162A2123
+  descriptions:
+  - PIN LOCK LINK APEX
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '21'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2301-2
+  base_part_number: 162A2301
+  descriptions:
+  - PIN - TRUNNION DRAG LH
+  - PIN - TRUNNION DRAG RH
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '23'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2302-1
+  base_part_number: 162A2302
+  descriptions:
+  - PIN - DRAG STRUT - LOWER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '24'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
+- part_number: 162A2302-2
+  base_part_number: 162A2302
+  descriptions:
+  - PIN - DRAG STRUT - UPPER
+  gear_positions:
+  - nlg
+  position_item_numbers:
+    nlg: '25'
+  limit_categories:
+    scrap:
+      life_limit_cycles: 75000
+    overhaul:
+      interval_cycles: 18000
+      interval_days: 3650
+  ata_chapter: '32'
+  life_limit_cycles: 75000
+  overhaul_interval_cycles: 18000
+  overhaul_interval_days: 3650
