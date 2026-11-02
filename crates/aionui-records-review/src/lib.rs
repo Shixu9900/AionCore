@@ -9,11 +9,13 @@
 
 mod engine;
 mod knowledge;
+mod lookup;
 mod model;
 mod routes;
 mod value;
 
 pub use engine::review;
 pub use knowledge::build_tree;
+pub use lookup::{LookupRequest, WorkbenchLookupCard, lookup_card, lookup_from_package};
 pub use model::*;
 pub use routes::records_review_routes;

@@ -25,7 +25,7 @@ use crate::factory::context::FactoryContext;
 use crate::manager::aionrs::{AionrsAgentManager, sanitize_session_messages};
 use crate::runtime_status::conversation_runtime_reporter;
 use crate::session_context::AionrsSessionBuildContext;
-use crate::types::{AionrsCompatOverrides, AionrsResolvedConfig, resolve_context_budget};
+use crate::types::{AIONRS_SESSION_RETENTION, AionrsCompatOverrides, AionrsResolvedConfig, resolve_context_budget};
 
 /// Render this conversation's skills index, or `""` when there is nothing to add.
 async fn skill_index_text(deps: &AgentFactoryDeps, user_id: &str, skills: &[String]) -> String {
@@ -257,7 +257,7 @@ fn resolve_build_session(
     conversation_id: &str,
     fork: Option<&ForkSpec>,
 ) -> Result<Option<Session>, AgentError> {
-    let session_mgr = SessionManager::new(session_directory.to_path_buf(), 100);
+    let session_mgr = SessionManager::new(session_directory.to_path_buf(), AIONRS_SESSION_RETENTION);
     if let Ok(mut session) = session_mgr.load(conversation_id) {
         let dropped = sanitize_session_messages(&mut session.messages);
         info!(
@@ -272,7 +272,7 @@ fn resolve_build_session(
 
     // Fallback: old architecture stored sessions inside the workspace.
     let legacy_dir = Path::new(workspace).join(".aionrs/sessions");
-    let legacy_mgr = SessionManager::new(legacy_dir, 100);
+    let legacy_mgr = SessionManager::new(legacy_dir, AIONRS_SESSION_RETENTION);
     if let Ok(mut session) = legacy_mgr.load(conversation_id) {
         let dropped = sanitize_session_messages(&mut session.messages);
         info!(

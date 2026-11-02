@@ -1,5 +1,6 @@
 mod content;
 mod error;
+mod project_memory;
 
 pub mod agent;
 pub mod history_sanitize;

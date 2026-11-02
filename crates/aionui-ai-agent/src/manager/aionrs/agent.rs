@@ -36,10 +36,11 @@ use crate::dev_prompt_dump::{AgentFinalInputDump, dump_agent_final_input};
 use crate::error::AgentError;
 use crate::protocol::events::AgentStreamEvent;
 use crate::protocol::send_error::AgentSendError;
-use crate::types::{AionrsResolvedConfig, SendMessageData};
+use crate::types::{AIONRS_SESSION_RETENTION, AionrsResolvedConfig, SendMessageData};
 
 use super::content::build_content_blocks;
 use super::error::{aionrs_engine_error_to_send_error, aionrs_runtime_error_summary};
+use super::project_memory::prepend_project_memory;
 
 fn resolve_aionui_config(cli_args: &CliArgs) -> Result<Config, AgentError> {
     let mut config =
@@ -217,6 +218,7 @@ impl AionrsAgentManager {
         config.bedrock = config_extra.bedrock_config;
         config.session.enabled = true;
         config.session.directory = config_extra.session_directory.to_string_lossy().into_owned();
+        config.session.max_sessions = AIONRS_SESSION_RETENTION;
         config.compat.image_input = Some(image_input_capability);
 
         if let Some(mode) = config_extra.compat_overrides.openai_api_mode {
@@ -417,7 +419,13 @@ impl IAgentTask for AionrsAgentManager {
             attachment_count = data.files.len(),
             "Building structured Aionrs content blocks"
         );
-        let content_blocks = build_content_blocks(&data.content, &data.files);
+        let pending = self.confirmations.read().map(|items| items.clone()).unwrap_or_default();
+        let content_blocks = prepend_project_memory(
+            build_content_blocks(&data.content, &data.files),
+            self.workspace(),
+            self.runtime.conversation_id(),
+            &pending,
+        );
         debug!(
             block_count = content_blocks.len(),
             "Built structured Aionrs content blocks"
@@ -639,7 +647,7 @@ impl AionrsAgentManager {
     }
 }
 
-const SCOPE_NOTE: &str = "履历 means a component's maintenance history inside this project. Do not search or read files outside the current workspace and the files attached to this message.";
+const SCOPE_NOTE: &str = "履历 means a component's maintenance history inside this project. Do not search or read files outside the current workspace and the files attached to this message. When the workbench can show the answer, call workbench_lookup first, then workbench_show with the card's page/focus/part, then reply in at most two short lines. Never invent review numbers.";
 
 fn scoped_system_prompt(existing: Option<String>) -> Option<String> {
     match existing {

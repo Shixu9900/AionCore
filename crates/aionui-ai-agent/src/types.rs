@@ -7,6 +7,11 @@ use serde::{Deserialize, Serialize};
 
 use crate::session_context::AgentSessionContext;
 
+/// aionrs SessionManager deletes the oldest `state.json` once this many
+/// sessions exist in one directory. Project conversations are one-per-aircraft
+/// and must survive create-workflow noise, so keep the ceiling high.
+pub const AIONRS_SESSION_RETENTION: usize = 10_000;
+
 /// Data payload for sending a user message to an Agent.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SendMessageData {

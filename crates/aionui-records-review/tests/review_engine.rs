@@ -89,7 +89,11 @@ fn conflicting_key_fields_do_not_choose_a_winner() {
     extra.source = "engine".into();
     pkg.observations.push(extra);
     let r = review(&pkg, today());
-    assert!(r.checks.iter().any(|c| c.rule.contains("交叉验证") && c.result == CheckResult::Fail));
+    assert!(
+        r.checks
+            .iter()
+            .any(|c| c.rule.contains("交叉验证") && c.result == CheckResult::Fail)
+    );
     assert!(r.open_items.iter().any(|i| i.rule == "cross_source_conflict"));
 }
 
@@ -105,6 +109,41 @@ fn regression_and_conflict_fail_the_review() {
     let r = review(&pkg, today());
     assert_eq!(r.verdict, Verdict::Fail);
     assert!(r.open_items.iter().any(|i| i.rule == "cross_source_conflict"));
+}
+
+#[test]
+fn lookup_card_selects_the_focused_serial_and_life_focus() {
+    let card = lookup_card(&review(&fixture(), today()), "RGF34904 还剩多少寿命");
+    assert!(card.found);
+    assert_eq!(card.serial_number, "RGF34904");
+    assert_eq!(card.page, "llp");
+    assert_eq!(card.focus, "life");
+    assert_eq!(card.part, "RGF34904");
+    assert_eq!(card.remaining_cycles, Some(9751.0));
+    assert_eq!(card.verdict.as_deref(), Some("conditional"));
+    assert!(card.open_items > 0);
+}
+
+#[tokio::test]
+async fn lookup_route_returns_the_card() {
+    let body = serde_json::json!({
+        "query": "RGF34904",
+        "package": serde_json::from_str::<serde_json::Value>(include_str!("fixtures/fan_blade_rgf34904.json")).unwrap(),
+    });
+    let res = records_review_routes()
+        .oneshot(
+            Request::post("/api/records-review/lookup")
+                .header("content-type", "application/json")
+                .body(Body::from(serde_json::to_vec(&body).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(res.status(), StatusCode::OK);
+    let bytes = res.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(json["data"]["serial_number"], "RGF34904");
+    assert_eq!(json["data"]["page"], "llp");
 }
 
 #[tokio::test]
