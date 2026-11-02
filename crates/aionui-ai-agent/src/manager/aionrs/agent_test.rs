@@ -47,6 +47,7 @@ fn make_test_config() -> AionrsResolvedConfig {
         provider: "anthropic".into(),
         api_key: "sk-test-key".into(),
         model: "claude-sonnet-4-20250514".into(),
+        context_budget: None,
         base_url: None,
         system_prompt: None,
         max_tokens: None,

@@ -25,7 +25,7 @@ use crate::factory::context::FactoryContext;
 use crate::manager::aionrs::{AionrsAgentManager, sanitize_session_messages};
 use crate::runtime_status::conversation_runtime_reporter;
 use crate::session_context::AionrsSessionBuildContext;
-use crate::types::{AionrsCompatOverrides, AionrsResolvedConfig};
+use crate::types::{AionrsCompatOverrides, AionrsResolvedConfig, resolve_context_budget};
 
 /// Render this conversation's skills index, or `""` when there is nothing to add.
 async fn skill_index_text(deps: &AgentFactoryDeps, user_id: &str, skills: &[String]) -> String {
@@ -182,10 +182,12 @@ pub(super) async fn build(
         overrides.fork.as_ref(),
     )?;
 
+    let context_budget = resolve_context_budget(&model_id, row.context_limit);
     let config = AionrsResolvedConfig {
         provider,
         api_key,
         model: model_id,
+        context_budget,
         base_url,
         system_prompt: overrides.system_prompt,
         max_tokens: None,

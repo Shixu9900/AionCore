@@ -20,7 +20,7 @@ use crate::factory::aionrs::{
     map_aionrs_provider, resolve_aionrs_url_and_compat_with_mode, resolve_bedrock_config,
     resolve_model_compat_overrides,
 };
-use crate::types::AionrsResolvedConfig;
+use crate::types::{AionrsResolvedConfig, resolve_context_budget};
 
 const HEALTH_CHECK_TIMEOUT: Duration = Duration::from_secs(30);
 const HEALTH_CHECK_MAX_TOKENS: u32 = 16;
@@ -91,6 +91,7 @@ impl ProviderHealthCheckService {
             provider,
             api_key,
             model: model_id.to_owned(),
+            context_budget: resolve_context_budget(model_id, row.context_limit),
             base_url,
             system_prompt: Some("You are a provider health probe. Reply with exactly OK and do not use tools.".into()),
             max_tokens: Some(HEALTH_CHECK_MAX_TOKENS),

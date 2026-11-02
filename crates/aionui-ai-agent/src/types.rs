@@ -127,6 +127,35 @@ pub struct AionrsCompatOverrides {
     pub api_path: Option<String>,
 }
 
+/// DeepSeek's API window. Used only when the provider row has no context limit.
+const DEEPSEEK_CONTEXT_WINDOW: usize = 1_000_000;
+/// DeepSeek Flash can emit this many tokens, so compaction must leave room for it.
+const DEEPSEEK_FLASH_OUTPUT_RESERVE: usize = 384_000;
+
+/// Token budget the compaction engine should use for one model.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ContextBudget {
+    pub context_window: usize,
+    /// Replaces the engine's 20k output reserve when the model can emit much more.
+    pub output_reserve: Option<usize>,
+}
+
+/// Provider limit wins. A DeepSeek model with no stored limit gets the 1M window,
+/// and Flash also reserves its 384k output so a long reply cannot overflow the window.
+pub fn resolve_context_budget(model: &str, provider_limit: Option<i64>) -> Option<ContextBudget> {
+    let from_provider = provider_limit.and_then(|n| usize::try_from(n).ok()).filter(|n| *n > 0);
+    let id = model.to_ascii_lowercase();
+    let is_deepseek = id.contains("deepseek");
+    let context_window = from_provider.or(is_deepseek.then_some(DEEPSEEK_CONTEXT_WINDOW))?;
+    let output_reserve = (is_deepseek && id.contains("flash"))
+        .then_some(DEEPSEEK_FLASH_OUTPUT_RESERVE)
+        .filter(|reserve| *reserve < context_window);
+    Some(ContextBudget {
+        context_window,
+        output_reserve,
+    })
+}
+
 /// Fully resolved Aionrs configuration passed to the agent manager.
 #[derive(Debug, Clone)]
 pub struct AionrsResolvedConfig {
@@ -136,6 +165,8 @@ pub struct AionrsResolvedConfig {
     pub api_key: String,
     /// Model identifier.
     pub model: String,
+    /// Compaction budget for this model. Absent keeps the engine default (200k).
+    pub context_budget: Option<ContextBudget>,
     /// Provider base URL.
     pub base_url: Option<String>,
     /// System prompt override.
@@ -172,6 +203,33 @@ mod tests {
     use super::*;
     use aionui_api_types::{AcpBuildExtra, AcpModelInfo, AionrsBuildExtra, SlashCommandItem};
     use serde_json::json;
+
+    #[test]
+    fn provider_limit_wins_over_the_deepseek_default() {
+        let budget = resolve_context_budget("deepseek-v4-flash", Some(200_000)).unwrap();
+        assert_eq!(budget.context_window, 200_000);
+        assert_eq!(budget.output_reserve, None);
+    }
+
+    #[test]
+    fn deepseek_flash_without_a_stored_limit_uses_one_million_and_reserves_output() {
+        let budget = resolve_context_budget("deepseek-v4-flash", None).unwrap();
+        assert_eq!(budget.context_window, 1_000_000);
+        assert_eq!(budget.output_reserve, Some(384_000));
+    }
+
+    #[test]
+    fn other_deepseek_models_get_the_window_without_the_flash_reserve() {
+        let budget = resolve_context_budget("deepseek-chat", Some(0)).unwrap();
+        assert_eq!(budget.context_window, 1_000_000);
+        assert_eq!(budget.output_reserve, None);
+    }
+
+    #[test]
+    fn unknown_model_without_a_limit_keeps_the_engine_default() {
+        assert_eq!(resolve_context_budget("claude-sonnet-4-20250514", None), None);
+        assert_eq!(resolve_context_budget("claude-sonnet-4-20250514", Some(-1)), None);
+    }
 
     #[test]
     fn acp_build_extra_accepts_payload_without_skills() {

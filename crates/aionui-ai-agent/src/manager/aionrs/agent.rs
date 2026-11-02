@@ -199,6 +199,19 @@ impl AionrsAgentManager {
         };
 
         let mut config = resolve_aionui_config(&cli_args)?;
+        if let Some(budget) = config_extra.context_budget {
+            config.compact.context_window = budget.context_window;
+            if let Some(reserve) = budget.output_reserve {
+                config.compact.output_reserve = reserve;
+            }
+            info!(
+                conversation_id = %conversation_id,
+                model = %config_extra.model,
+                context_window = budget.context_window,
+                output_reserve = budget.output_reserve.unwrap_or(config.compact.output_reserve),
+                "Applied the model context budget"
+            );
+        }
 
         // Backend-specific overrides
         config.bedrock = config_extra.bedrock_config;
