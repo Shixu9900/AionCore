@@ -114,6 +114,39 @@ async fn dual_readers_and_local_only() {
     assert!(denied.unwrap_err().contains("not running"));
 }
 
+/// Regression test: a reader failure that is not `Unavailable`/`CloudDisabled`
+/// (so the document keeps going instead of aborting) must survive the
+/// unconditional `clear_issues` call made right after the reader loop. It
+/// previously did not: the issue was inserted, then wiped a moment later,
+/// because `page_issues` only looks at successful reader output and never
+/// resurfaces a failed reader's own error.
+#[tokio::test]
+async fn a_non_fatal_reader_failure_is_not_erased_right_after_being_recorded() {
+    let store = store().await;
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("note.txt");
+    std::fs::write(&path, "TSN 29189").unwrap();
+    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop()).await.unwrap();
+
+    struct FlakyProvider;
+    #[async_trait]
+    impl ParseProvider for FlakyProvider {
+        async fn parse(&self, _request: &ParseRequest) -> Result<ReaderOutput, ProviderError> {
+            Err(ProviderError::Transport("mineru returned a malformed response".into()))
+        }
+    }
+
+    parse_document(&store, &doc.doc_id, &FlakyProvider, &RoutingTable::default())
+        .await
+        .unwrap();
+
+    let issues = store.list_issues(&doc.sha256).await.unwrap();
+    assert!(
+        issues.iter().any(|i| i.code == "render_failed" && i.detail.contains("malformed response")),
+        "the reader's own failure detail must still be present after clear_issues; got {issues:?}"
+    );
+}
+
 #[tokio::test]
 async fn search_stays_inside_the_project() {
     let store = store().await;

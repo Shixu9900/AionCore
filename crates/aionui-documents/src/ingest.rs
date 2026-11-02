@@ -74,7 +74,7 @@ async fn insert_new(
     content: &[u8],
     limits: IngestLimits,
 ) -> Result<DocumentRow, IngestError> {
-    let (page_count, mut pages, _text) = classify_path(path, content);
+    let (page_count, mut pages, _page_texts) = classify_path(path, content);
     if page_count > limits.max_pages {
         return Err(IngestError::Quota(format!(
             "This file has {page_count} pages. The desktop limit is {}. Split the file and add the parts.",

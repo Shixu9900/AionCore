@@ -29,14 +29,23 @@ pub async fn parse_document<P: ParseProvider>(
         .ok_or_else(|| "document not found".to_string())?;
     let path = Path::new(&doc.path);
     let bytes = std::fs::read(path).map_err(|e| e.to_string())?;
-    let (_, pages, text_layer) = classify_path(path, &bytes);
-    for mut page in pages {
+    let (_, pages, mut page_texts) = classify_path(path, &bytes);
+    // `classify_path` index-aligns `page_texts` with `pages`; pad defensively so a
+    // short vector (should not happen, but must not panic) still yields empty text
+    // rather than reusing a neighboring page's text.
+    page_texts.resize(pages.len(), String::new());
+    for (mut page, page_text) in pages.into_iter().zip(page_texts) {
         page.sha256 = doc.sha256.clone();
         let kind = PageKind::parse(&page.kind);
         let route = table.for_kind(kind);
         let mut readers = Vec::new();
+        // Collected here, not inserted immediately: the unconditional `clear_issues`
+        // call below would otherwise wipe out a reader failure the moment after it
+        // was recorded, since `page_issues` only derives issues from successful
+        // `readers` output and never resurfaces a failed reader's error.
+        let mut reader_issues = Vec::new();
         for reader in &route.readers {
-            match read_one(*reader, path, &page, &text_layer, provider).await {
+            match read_one(*reader, path, &page, &page_text, provider).await {
                 Ok(mut output) => {
                     for block in &mut output.blocks {
                         if block.sha256.is_empty() {
@@ -66,23 +75,21 @@ pub async fn parse_document<P: ParseProvider>(
                     return Err("local MinerU is not running".into());
                 }
                 Err(err) => {
-                    store
-                        .insert_issue(&PageIssue {
-                            issue_id: Uuid::now_v7().to_string(),
-                            sha256: doc.sha256.clone(),
-                            page_no: page.page_no,
-                            bbox: None,
-                            code: IssueCode::RenderFailed.as_str().into(),
-                            severity: "high".into(),
-                            detail: err.to_string(),
-                        })
-                        .await
-                        .map_err(|e| e.to_string())?;
+                    reader_issues.push(PageIssue {
+                        issue_id: Uuid::now_v7().to_string(),
+                        sha256: doc.sha256.clone(),
+                        page_no: page.page_no,
+                        bbox: None,
+                        code: IssueCode::RenderFailed.as_str().into(),
+                        severity: "high".into(),
+                        detail: err.to_string(),
+                    });
                 }
             }
         }
         store.clear_issues(&doc.sha256, page.page_no).await.map_err(|e| e.to_string())?;
-        let issues = page_issues(&doc.sha256, page.page_no, &readers);
+        let mut issues = page_issues(&doc.sha256, page.page_no, &readers);
+        issues.extend(reader_issues);
         for issue in &issues {
             store.insert_issue(issue).await.map_err(|e| e.to_string())?;
         }
