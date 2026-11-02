@@ -36,7 +36,9 @@ use aionui_file::file_routes;
 use aionui_mcp::mcp_routes;
 use aionui_office::{office_proxy_routes, office_routes};
 use aionui_project::project_routes;
-use aionui_documents::{DocumentState, DocumentStore, MinerULifecycle, RoutingTable, document_routes};
+use aionui_documents::{
+    DocumentState, DocumentStore, MinerULifecycle, ParseOptions, ParseQueue, RoutingTable, document_routes,
+};
 use aionui_records_review::records_review_routes;
 use aionui_realtime::{NoopMessageRouter, WebSocketManager, WsHandlerState, ws_upgrade_handler};
 use aionui_shell::shell_routes;
@@ -322,9 +324,13 @@ pub fn create_router_with_all_state(services: &AppServices, states: ModuleStates
 
     let document_authenticated = document_routes(DocumentState {
         store: DocumentStore::new(services.database.pool().clone()),
+        queue: ParseQueue::new(services.database.pool().clone()),
         lifecycle: MinerULifecycle::shared(services.data_dir.clone()),
         routing: RoutingTable::default(),
+        parse_options: ParseOptions::default(),
         desktop: services.local,
+        worker_running: Arc::new(std::sync::atomic::AtomicBool::new(false)),
+        pause_reason: Arc::new(tokio::sync::Mutex::new(None)),
     })
     .route_layer(from_fn_with_state(auth_mw_state.clone(), auth_middleware));
 

@@ -136,30 +136,281 @@ fn page_rotation(doc: &lopdf::Document, obj_id: lopdf::ObjectId) -> i32 {
         .unwrap_or(0) as i32
 }
 
+/// Fraction of the page covered by images that are actually drawn.
+///
+/// A logo or a stamp is an XObject too, so the mere presence of an image must not
+/// decide the page. Coverage is the area of each image's drawing transform over
+/// the page area, which is what separates a full-page scan from an electronic
+/// page that happens to contain a picture.
 fn page_image_coverage(doc: &lopdf::Document, obj_id: lopdf::ObjectId) -> f64 {
-    let Ok(obj) = doc.get_object(obj_id) else {
+    let Some(dict) = doc.get_object(obj_id).ok().and_then(|obj| obj.as_dict().ok()) else {
         return 0.0;
     };
-    let Ok(dict) = obj.as_dict() else {
+    let media = inherited_box(doc, dict);
+    let page_area = (media[2] - media[0]).abs() * (media[3] - media[1]).abs();
+    if page_area <= f64::EPSILON {
         return 0.0;
-    };
-    let resources = dict.get(b"Resources").ok().and_then(|r| match r {
-        lopdf::Object::Dictionary(d) => Some(d.clone()),
-        lopdf::Object::Reference(id) => doc.get_object(*id).ok().and_then(|o| o.as_dict().ok().cloned()),
-        _ => None,
-    });
-    let Some(resources) = resources else {
-        return 0.0;
-    };
-    let xobject = resources.get(b"XObject").ok().and_then(|r| match r {
-        lopdf::Object::Dictionary(d) => Some(d.len()),
-        lopdf::Object::Reference(id) => doc.get_object(*id).ok().and_then(|o| o.as_dict().ok().map(|d| d.len())),
-        _ => None,
-    });
-    match xobject {
-        Some(n) if n > 0 => 0.9,
-        _ => 0.0,
     }
+    let Some(resources) = inherited_dict(doc, dict, b"Resources") else {
+        return 0.0;
+    };
+    let drawn = content_streams(doc, dict)
+        .iter()
+        .map(|bytes| drawn_image_area(doc, &resources, bytes))
+        .sum::<f64>();
+    (drawn / page_area).clamp(0.0, 1.0)
+}
+
+fn inherited_dict(doc: &lopdf::Document, start: &lopdf::Dictionary, key: &[u8]) -> Option<lopdf::Dictionary> {
+    let mut current = Some(start.clone());
+    for _ in 0..5 {
+        let node = current?;
+        if let Some(found) = resolve_dict(doc, &node, key) {
+            return Some(found);
+        }
+        current = parent_dict(doc, &node);
+    }
+    None
+}
+
+fn inherited_box(doc: &lopdf::Document, start: &lopdf::Dictionary) -> [f64; 4] {
+    let mut current = Some(start.clone());
+    for _ in 0..5 {
+        let Some(node) = current else { break };
+        if let Some(nums) = node.get(b"MediaBox").ok().and_then(box_of) {
+            return nums;
+        }
+        current = parent_dict(doc, &node);
+    }
+    [0.0, 0.0, 612.0, 792.0]
+}
+
+fn parent_dict(doc: &lopdf::Document, node: &lopdf::Dictionary) -> Option<lopdf::Dictionary> {
+    match node.get(b"Parent").ok()? {
+        lopdf::Object::Reference(id) => doc.get_object(*id).ok().and_then(|obj| obj.as_dict().ok().cloned()),
+        lopdf::Object::Dictionary(dict) => Some(dict.clone()),
+        _ => None,
+    }
+}
+
+fn resolve_dict(doc: &lopdf::Document, dict: &lopdf::Dictionary, key: &[u8]) -> Option<lopdf::Dictionary> {
+    match dict.get(key).ok()? {
+        lopdf::Object::Dictionary(inner) => Some(inner.clone()),
+        lopdf::Object::Reference(id) => doc.get_object(*id).ok().and_then(|obj| obj.as_dict().ok().cloned()),
+        _ => None,
+    }
+}
+
+fn box_of(obj: &lopdf::Object) -> Option<[f64; 4]> {
+    let values = obj.as_array().ok()?;
+    let nums: Vec<f64> = values
+        .iter()
+        .map(|value| f64::from(value.as_float().unwrap_or(0.0)))
+        .collect();
+    (nums.len() == 4).then(|| [nums[0], nums[1], nums[2], nums[3]])
+}
+
+fn content_streams(doc: &lopdf::Document, dict: &lopdf::Dictionary) -> Vec<Vec<u8>> {
+    let Ok(contents) = dict.get(b"Contents") else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    match contents {
+        lopdf::Object::Reference(id) => push_stream(doc, *id, &mut out),
+        lopdf::Object::Stream(stream) => out.push(decode_stream(stream)),
+        lopdf::Object::Array(items) => {
+            for item in items {
+                if let lopdf::Object::Reference(id) = item {
+                    push_stream(doc, *id, &mut out);
+                }
+            }
+        }
+        _ => {}
+    }
+    out
+}
+
+fn push_stream(doc: &lopdf::Document, id: lopdf::ObjectId, out: &mut Vec<Vec<u8>>) {
+    if let Ok(lopdf::Object::Stream(stream)) = doc.get_object(id) {
+        out.push(decode_stream(stream));
+    }
+}
+
+fn decode_stream(stream: &lopdf::Stream) -> Vec<u8> {
+    stream.decompressed_content().unwrap_or_else(|_| stream.content.clone())
+}
+
+/// Sum of the areas of the image XObjects the content stream draws, in page
+/// points. Each image is drawn as the unit square under the current transform,
+/// so its area is the absolute value of that transform's determinant.
+fn drawn_image_area(doc: &lopdf::Document, resources: &lopdf::Dictionary, stream: &[u8]) -> f64 {
+    let mut ctm = [1.0, 0.0, 0.0, 1.0, 0.0, 0.0];
+    let mut saved: Vec<[f64; 6]> = Vec::new();
+    let mut operands: Vec<f64> = Vec::new();
+    let mut last_name = String::new();
+    let mut area = 0.0;
+    for token in tokenize(stream) {
+        match token {
+            Token::Number(value) => operands.push(value),
+            Token::Name(name) => last_name = name,
+            Token::Operator(op) => {
+                match op.as_str() {
+                    "q" => saved.push(ctm),
+                    "Q" => {
+                        if let Some(prev) = saved.pop() {
+                            ctm = prev;
+                        }
+                    }
+                    "cm" => {
+                        if operands.len() >= 6 {
+                            let start = operands.len() - 6;
+                            let m = &operands[start..];
+                            ctm = multiply([m[0], m[1], m[2], m[3], m[4], m[5]], ctm);
+                        }
+                    }
+                    "Do" => {
+                        if xobject_is_image(doc, resources, &last_name) {
+                            area += (ctm[0] * ctm[3] - ctm[1] * ctm[2]).abs();
+                        }
+                    }
+                    _ => {}
+                }
+                operands.clear();
+            }
+        }
+    }
+    area
+}
+
+fn multiply(applied: [f64; 6], current: [f64; 6]) -> [f64; 6] {
+    [
+        applied[0] * current[0] + applied[1] * current[2],
+        applied[0] * current[1] + applied[1] * current[3],
+        applied[2] * current[0] + applied[3] * current[2],
+        applied[2] * current[1] + applied[3] * current[3],
+        applied[4] * current[0] + applied[5] * current[2] + current[4],
+        applied[4] * current[1] + applied[5] * current[3] + current[5],
+    ]
+}
+
+fn xobject_is_image(doc: &lopdf::Document, resources: &lopdf::Dictionary, name: &str) -> bool {
+    let Some(xobjects) = resolve_dict(doc, resources, b"XObject") else {
+        return false;
+    };
+    let Ok(obj) = xobjects.get(name.as_bytes()) else {
+        return false;
+    };
+    let dict = match obj {
+        lopdf::Object::Reference(id) => doc.get_object(*id).ok().and_then(|inner| match inner {
+            lopdf::Object::Stream(stream) => Some(stream.dict.clone()),
+            lopdf::Object::Dictionary(inner) => Some(inner.clone()),
+            _ => None,
+        }),
+        lopdf::Object::Stream(stream) => Some(stream.dict.clone()),
+        lopdf::Object::Dictionary(inner) => Some(inner.clone()),
+        _ => None,
+    };
+    dict.and_then(|inner| {
+        inner
+            .get(b"Subtype")
+            .ok()
+            .and_then(|value| value.as_name().ok())
+            .map(|name| name == b"Image")
+    })
+    .unwrap_or(false)
+}
+
+enum Token {
+    Number(f64),
+    Name(String),
+    Operator(String),
+}
+
+fn tokenize(bytes: &[u8]) -> Vec<Token> {
+    let mut out = Vec::new();
+    let mut index = 0;
+    while index < bytes.len() {
+        let byte = bytes[index];
+        if byte.is_ascii_whitespace() {
+            index += 1;
+            continue;
+        }
+        if byte == b'%' {
+            while index < bytes.len() && bytes[index] != b'\n' {
+                index += 1;
+            }
+            continue;
+        }
+        if byte == b'(' {
+            let mut depth = 1;
+            index += 1;
+            while index < bytes.len() && depth > 0 {
+                match bytes[index] {
+                    b'\\' => index += 2,
+                    b'(' => {
+                        depth += 1;
+                        index += 1;
+                    }
+                    b')' => {
+                        depth -= 1;
+                        index += 1;
+                    }
+                    _ => index += 1,
+                }
+            }
+            continue;
+        }
+        if byte == b'<' {
+            if bytes.get(index + 1) == Some(&b'<') {
+                index += 2;
+                while index + 1 < bytes.len() && !(bytes[index] == b'>' && bytes[index + 1] == b'>') {
+                    index += 1;
+                }
+                index += 2;
+                continue;
+            }
+            while index < bytes.len() && bytes[index] != b'>' {
+                index += 1;
+            }
+            index += 1;
+            continue;
+        }
+        if byte == b'/' {
+            index += 1;
+            let start = index;
+            while index < bytes.len() && !is_delimiter(bytes[index]) {
+                index += 1;
+            }
+            out.push(Token::Name(String::from_utf8_lossy(&bytes[start..index]).into_owned()));
+            continue;
+        }
+        if matches!(byte, b'[' | b']') {
+            index += 1;
+            continue;
+        }
+        let start = index;
+        while index < bytes.len() && !is_delimiter(bytes[index]) {
+            index += 1;
+        }
+        let word = &bytes[start..index];
+        if word.is_empty() {
+            index += 1;
+            continue;
+        }
+        match std::str::from_utf8(word).unwrap_or("").parse::<f64>() {
+            Ok(value) => out.push(Token::Number(value)),
+            Err(_) => out.push(Token::Operator(String::from_utf8_lossy(word).into_owned())),
+        }
+    }
+    out
+}
+
+fn is_delimiter(byte: u8) -> bool {
+    byte.is_ascii_whitespace()
+        || matches!(
+            byte,
+            b'/' | b'(' | b')' | b'<' | b'>' | b'[' | b']' | b'{' | b'}' | b'%'
+        )
 }
 
 fn office_text(bytes: &[u8]) -> String {
@@ -268,7 +519,8 @@ mod tests {
         });
         doc.trailer.set("Root", catalog_id);
         let mut bytes = Vec::new();
-        doc.save_to(&mut bytes).expect("saving a freshly built test PDF must not fail");
+        doc.save_to(&mut bytes)
+            .expect("saving a freshly built test PDF must not fail");
         bytes
     }
 
@@ -283,7 +535,11 @@ mod tests {
 
         assert_eq!(page_count, 2);
         assert_eq!(rows.len(), 2);
-        assert_eq!(page_texts.len(), 2, "page_texts must be index-aligned with rows, one entry per page");
+        assert_eq!(
+            page_texts.len(),
+            2,
+            "page_texts must be index-aligned with rows, one entry per page"
+        );
 
         assert!(page_texts[0].contains("PAGE-ONE-MARKER"));
         assert!(
@@ -306,5 +562,82 @@ mod tests {
         assert_eq!(count, 1);
         assert_eq!(rows.len(), 1);
         assert_eq!(texts.len(), 1);
+    }
+
+    /// A one-page PDF whose only image is `Im0`, drawn by `content`.
+    fn pdf_with_image(content: &str) -> Vec<u8> {
+        let mut doc = Document::with_version("1.5");
+        let pages_id = doc.new_object_id();
+        let image_id = doc.add_object(Stream::new(
+            dictionary! {
+                "Type" => "XObject",
+                "Subtype" => "Image",
+                "Width" => 1i64,
+                "Height" => 1i64,
+                "ColorSpace" => "DeviceGray",
+                "BitsPerComponent" => 8i64,
+            },
+            vec![0],
+        ));
+        let font_id = doc.add_object(dictionary! {
+            "Type" => "Font",
+            "Subtype" => "Type1",
+            "BaseFont" => "Helvetica",
+        });
+        let resources_id = doc.add_object(dictionary! {
+            "Font" => dictionary! { "F1" => font_id },
+            "XObject" => dictionary! { "Im0" => image_id },
+        });
+        let content_id = doc.add_object(Stream::new(dictionary! {}, content.as_bytes().to_vec()));
+        let page_id = doc.add_object(dictionary! {
+            "Type" => "Page",
+            "Parent" => pages_id,
+            "Contents" => content_id,
+            "Resources" => resources_id,
+            "MediaBox" => vec![0.into(), 0.into(), 612.into(), 792.into()],
+        });
+        doc.objects.insert(
+            pages_id,
+            Object::Dictionary(dictionary! {
+                "Type" => "Pages",
+                "Count" => 1i64,
+                "Kids" => vec![Object::from(page_id)],
+            }),
+        );
+        let catalog_id = doc.add_object(dictionary! {
+            "Type" => "Catalog",
+            "Pages" => pages_id,
+        });
+        doc.trailer.set("Root", catalog_id);
+        let mut bytes = Vec::new();
+        doc.save_to(&mut bytes)
+            .expect("saving a freshly built test PDF must not fail");
+        bytes
+    }
+
+    #[test]
+    fn a_logo_does_not_make_an_electronic_page_a_scan() {
+        let bytes = pdf_with_image(
+            "50 0 0 40 28 740 cm /Im0 Do BT /F1 12 Tf 72 700 Td (This electronic page carries a real text layer and a small logo.) Tj ET",
+        );
+        let (_, rows, _) = classify_pdf(&bytes);
+        assert!(
+            rows[0].image_coverage < 0.85,
+            "a small logo covered {:.3} of the page",
+            rows[0].image_coverage
+        );
+        assert_eq!(rows[0].kind, "digital");
+    }
+
+    #[test]
+    fn a_full_page_image_is_a_scan() {
+        let bytes = pdf_with_image("612 0 0 792 0 0 cm /Im0 Do");
+        let (_, rows, _) = classify_pdf(&bytes);
+        assert!(
+            rows[0].image_coverage >= 0.85,
+            "a full-page image covered only {:.3} of the page",
+            rows[0].image_coverage
+        );
+        assert_eq!(rows[0].kind, "clean_scan");
     }
 }

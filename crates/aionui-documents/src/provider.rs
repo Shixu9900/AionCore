@@ -117,6 +117,29 @@ impl ParseProvider for LocalDoclibProvider {
     }
 }
 
+/// `GET /api/v1/server/status`. `parse_server.local.healthy` is how a caller
+/// tells that MinerU has finished loading its models, which happens well after
+/// the socket file appears.
+pub async fn local_server_status(socket: &Path) -> Result<Value, ProviderError> {
+    unix_json(socket, "GET", "/api/v1/server/status", None).await
+}
+
+pub async fn local_config(socket: &Path, key: &str) -> Result<String, ProviderError> {
+    let body = unix_json(socket, "GET", &format!("/api/v1/configs/{key}"), None).await?;
+    Ok(body["value"].as_str().unwrap_or_default().to_string())
+}
+
+pub async fn local_set_config(socket: &Path, key: &str, value: &str) -> Result<(), ProviderError> {
+    unix_json(
+        socket,
+        "PUT",
+        &format!("/api/v1/configs/{key}"),
+        Some(&json!({ "value": value })),
+    )
+    .await
+    .map(|_| ())
+}
+
 async fn poll_until_ready(socket: &Path, ids: &[i64]) -> Result<(), ProviderError> {
     if ids.is_empty() {
         return Ok(());
@@ -124,10 +147,9 @@ async fn poll_until_ready(socket: &Path, ids: &[i64]) -> Result<(), ProviderErro
     for _ in 0..600 {
         let mut pending = false;
         for id in ids {
-            let status: ParseStatus = serde_json::from_value(
-                unix_json(socket, "GET", &format!("/api/v1/parses/{id}"), None).await?,
-            )
-            .map_err(|e| ProviderError::Transport(e.to_string()))?;
+            let status: ParseStatus =
+                serde_json::from_value(unix_json(socket, "GET", &format!("/api/v1/parses/{id}"), None).await?)
+                    .map_err(|e| ProviderError::Transport(e.to_string()))?;
             match status.status.as_str() {
                 "done" | "superseded" => {}
                 "failed" | "error" => {
@@ -149,12 +171,7 @@ async fn poll_until_ready(socket: &Path, ids: &[i64]) -> Result<(), ProviderErro
     Err(ProviderError::Transport("parse timed out".into()))
 }
 
-async fn unix_json(
-    socket: &Path,
-    method: &str,
-    path: &str,
-    body: Option<&Value>,
-) -> Result<Value, ProviderError> {
+async fn unix_json(socket: &Path, method: &str, path: &str, body: Option<&Value>) -> Result<Value, ProviderError> {
     if !socket.exists() {
         return Err(ProviderError::Unavailable);
     }
@@ -185,7 +202,8 @@ async fn unix_json(
             .await
             .map_err(|e| ProviderError::Transport(e.to_string()))?;
     }
-    let _ = stream.shutdown().await;
+    // No write-side shutdown: uvicorn drops a half-closed request without a
+    // response. `Connection: close` is what ends the read.
     let mut buf = Vec::new();
     tokio::time::timeout(Duration::from_secs(600), stream.read_to_end(&mut buf))
         .await
@@ -312,11 +330,7 @@ fn content_to_output(body: &Value, tier: Tier, page_no: u32) -> ReaderOutput {
 
 fn block_bbox(block: &Value) -> Option<[f64; 4]> {
     let raw = block.get("bbox").or_else(|| block.get("bbox_norm"))?;
-    let nums: Vec<f64> = raw
-        .as_array()?
-        .iter()
-        .filter_map(Value::as_f64)
-        .collect();
+    let nums: Vec<f64> = raw.as_array()?.iter().filter_map(Value::as_f64).collect();
     (nums.len() == 4).then(|| [nums[0], nums[1], nums[2], nums[3]])
 }
 

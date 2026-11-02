@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::store::DocumentStore;
 use crate::triage::{classify_path, sha256_file};
 use crate::types::{DocumentRow, IssueCode, PageIssue, PageKind};
-use crate::{DESKTOP_PAGE_LIMIT, WEB_PAGE_LIMIT};
+use crate::{TRIAL_PAGES_PER_RUN, WEB_PAGE_LIMIT};
 
 #[derive(Debug, Error)]
 pub enum IngestError {
@@ -23,19 +23,29 @@ pub enum IngestError {
 
 #[derive(Debug, Clone, Copy)]
 pub struct IngestLimits {
-    pub max_pages: u32,
+    /// Pages a single run will parse before it pauses. `None` means the run keeps
+    /// going for as long as there is queued work. A budget pauses the run and
+    /// leaves the queue intact; it never refuses a file at the door, because the
+    /// page queue makes document size irrelevant to whether a run can finish.
+    pub pages_per_run: Option<u32>,
 }
 
 impl IngestLimits {
     pub fn desktop() -> Self {
+        Self { pages_per_run: None }
+    }
+
+    /// The released test build. Reaching the budget stops the run with its queue
+    /// and its finished pages intact, so upgrading resumes rather than restarts.
+    pub fn trial() -> Self {
         Self {
-            max_pages: DESKTOP_PAGE_LIMIT,
+            pages_per_run: Some(TRIAL_PAGES_PER_RUN),
         }
     }
 
     pub fn web() -> Self {
         Self {
-            max_pages: WEB_PAGE_LIMIT,
+            pages_per_run: Some(WEB_PAGE_LIMIT),
         }
     }
 }
@@ -51,18 +61,18 @@ pub async fn add_file(
     store: &DocumentStore,
     project_id: &str,
     path: &Path,
-    limits: IngestLimits,
+    _limits: IngestLimits,
 ) -> Result<DocumentRow, IngestError> {
     let (sha, bytes, content) = sha256_file(path)?;
     if let Some(existing) = store.find_by_path(project_id, &path_string(path)).await? {
         if existing.sha256 == sha {
             return Ok(existing);
         }
-        let new_row = insert_new(store, project_id, path, &sha, bytes, &content, limits).await?;
+        let new_row = insert_new(store, project_id, path, &sha, bytes, &content).await?;
         store.supersede(&existing.doc_id, &new_row.doc_id).await?;
         return Ok(new_row);
     }
-    insert_new(store, project_id, path, &sha, bytes, &content, limits).await
+    insert_new(store, project_id, path, &sha, bytes, &content).await
 }
 
 async fn insert_new(
@@ -72,15 +82,8 @@ async fn insert_new(
     sha: &str,
     bytes: u64,
     content: &[u8],
-    limits: IngestLimits,
 ) -> Result<DocumentRow, IngestError> {
     let (page_count, mut pages, _page_texts) = classify_path(path, content);
-    if page_count > limits.max_pages {
-        return Err(IngestError::Quota(format!(
-            "This file has {page_count} pages. The desktop limit is {}. Split the file and add the parts.",
-            limits.max_pages
-        )));
-    }
     let filename = path
         .file_name()
         .and_then(|n| n.to_str())

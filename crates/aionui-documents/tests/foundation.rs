@@ -2,12 +2,11 @@ use std::io::Write;
 
 use aionui_db::init_database_memory;
 use aionui_documents::{
-    AnnotateRequest, DocumentStore, IngestLimits, RoutingTable, add_file, annotate, field_exact_match, package_from_store,
-    parse_document, replay, search_project, seed_41744,
+    AnnotateRequest, DocumentState, DocumentStore, IngestLimits, MAX_ATTEMPTS, MinerULifecycle, ParseOptions,
+    ParseQueue, RoutingTable, add_file, annotate, field_exact_match, package_from_store, parse_document, replay,
+    run_queue, search_project, seed_41744,
 };
-use aionui_documents::{
-    FsChange, ParseProvider, ParseRequest, ProviderError, ReaderOutput, apply_fs_event,
-};
+use aionui_documents::{FsChange, ParseProvider, ParseRequest, ProviderError, ReaderOutput, apply_fs_event};
 use async_trait::async_trait;
 
 struct FakeProvider {
@@ -43,9 +42,13 @@ async fn ingest_add_rename_delete_and_edit() {
     let path = dir.path().join("blade.txt");
     std::fs::write(&path, "TSN 29189 CSN 4585").unwrap();
 
-    let added = add_file(&store, "proj-a", &path, IngestLimits::desktop()).await.unwrap();
+    let added = add_file(&store, "proj-a", &path, IngestLimits::desktop())
+        .await
+        .unwrap();
     assert_eq!(added.page_count, 1);
-    let same = add_file(&store, "proj-a", &path, IngestLimits::desktop()).await.unwrap();
+    let same = add_file(&store, "proj-a", &path, IngestLimits::desktop())
+        .await
+        .unwrap();
     assert_eq!(same.doc_id, added.doc_id);
 
     let renamed = dir.path().join("blade-moved.txt");
@@ -64,27 +67,237 @@ async fn ingest_add_rename_delete_and_edit() {
     assert!(after_rename.path.ends_with("blade-moved.txt"));
 
     std::fs::write(&renamed, "TSN 29189 CSN 4586").unwrap();
-    let edited = add_file(&store, "proj-a", &renamed, IngestLimits::desktop()).await.unwrap();
+    let edited = add_file(&store, "proj-a", &renamed, IngestLimits::desktop())
+        .await
+        .unwrap();
     assert_ne!(edited.sha256, added.sha256);
     assert_eq!(
-        store.find_by_id(&added.doc_id).await.unwrap().unwrap().superseded_by.as_deref(),
+        store
+            .find_by_id(&added.doc_id)
+            .await
+            .unwrap()
+            .unwrap()
+            .superseded_by
+            .as_deref(),
         Some(edited.doc_id.as_str())
     );
 
     apply_fs_event(&store, "proj-a", FsChange::Delete(renamed), IngestLimits::desktop())
         .await
         .unwrap();
-    assert!(store.find_by_id(&edited.doc_id).await.unwrap().unwrap().deleted_at.is_some());
+    assert!(
+        store
+            .find_by_id(&edited.doc_id)
+            .await
+            .unwrap()
+            .unwrap()
+            .deleted_at
+            .is_some()
+    );
 }
 
+/// Page count must not decide whether a file is allowed in. A lease return is
+/// tens of thousands of pages and the page queue is what carries it, so the old
+/// behaviour here — refusing the file outright — was the wrong shape of limit.
 #[tokio::test]
-async fn page_quota_rejects_oversize() {
+async fn ingest_does_not_refuse_a_file_for_its_page_count() {
     let store = store().await;
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("big.txt");
     std::fs::write(&path, "x").unwrap();
-    let err = add_file(&store, "p", &path, IngestLimits { max_pages: 0 }).await.unwrap_err();
-    assert!(err.to_string().contains("limit"));
+    for limits in [IngestLimits::desktop(), IngestLimits::trial(), IngestLimits::web()] {
+        add_file(&store, "p", &path, limits)
+            .await
+            .expect("accepted regardless of budget");
+    }
+}
+
+/// An interrupted run resumes: pages finished earlier are not read again.
+#[tokio::test]
+async fn a_second_parse_resumes_instead_of_rereading() {
+    let store = store().await;
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("note.txt");
+    std::fs::write(&path, "TSN 29189").unwrap();
+    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop())
+        .await
+        .unwrap();
+    let provider = FakeProvider {
+        text: "TSN 29189".into(),
+    };
+
+    let first = parse_document(
+        &store,
+        &doc.doc_id,
+        &provider,
+        &RoutingTable::default(),
+        ParseOptions::default(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(first.parsed, 1);
+    assert_eq!(first.resumed, 0);
+
+    let second = parse_document(
+        &store,
+        &doc.doc_id,
+        &provider,
+        &RoutingTable::default(),
+        ParseOptions::default(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(second.parsed, 0, "the finished page must not be read a second time");
+    assert_eq!(second.resumed, 1);
+}
+
+/// The queue is the crash recovery. A worker that never comes back leaves an
+/// expired lease, and the next claim takes the page: no recovery pass, no
+/// bookkeeping to get wrong.
+#[tokio::test]
+async fn an_expired_lease_returns_the_page_to_the_queue() {
+    let db = init_database_memory().await.expect("memory db");
+    let queue = ParseQueue::new(db.pool().clone());
+    queue.enqueue_document("doc-1", "sha-1", 3).await.unwrap();
+
+    let held = queue.claim("worker-a", 10).await.unwrap();
+    assert_eq!(held.len(), 3);
+    assert!(
+        queue.claim("worker-b", 10).await.unwrap().is_empty(),
+        "a live lease must not be stealable"
+    );
+
+    sqlx::query("UPDATE parse_tasks SET lease_expires_at = '2000-01-01T00:00:00Z'")
+        .execute(db.pool())
+        .await
+        .unwrap();
+    assert_eq!(
+        queue.claim("worker-b", 10).await.unwrap().len(),
+        3,
+        "an expired lease must be claimable by the next worker"
+    );
+
+    queue.complete(&held[0].task_id).await.unwrap();
+    let progress = queue.progress(Some("doc-1")).await.unwrap();
+    assert_eq!(progress.total, 3);
+    assert_eq!(progress.done, 1);
+}
+
+/// A page that keeps failing is recorded and skipped. The run has to outlive its
+/// worst page, not stop at it.
+#[tokio::test]
+async fn a_page_is_dropped_after_its_retries_run_out() {
+    let db = init_database_memory().await.expect("memory db");
+    let queue = ParseQueue::new(db.pool().clone());
+    queue.enqueue_document("doc-1", "sha-1", 1).await.unwrap();
+
+    for _ in 0..MAX_ATTEMPTS {
+        let task = queue.claim("worker-a", 1).await.unwrap();
+        assert_eq!(task.len(), 1, "a page under its retry budget stays claimable");
+        queue.fail(&task[0].task_id, "render failed").await.unwrap();
+    }
+    assert!(queue.claim("worker-a", 1).await.unwrap().is_empty());
+    assert_eq!(queue.progress(Some("doc-1")).await.unwrap().failed, 1);
+
+    queue.enqueue_document("doc-1", "sha-1", 1).await.unwrap();
+    let retry = queue.claim("worker-a", 1).await.unwrap();
+    assert_eq!(retry.len(), 1, "asking to parse again must retry a page that ran out of retries");
+    assert_eq!(retry[0].attempts, 0);
+}
+
+/// A killed app leaves its page leased. The next worker takes it back at once
+/// instead of waiting out the lease.
+#[tokio::test]
+async fn a_restarted_worker_takes_back_its_own_lease() {
+    let db = init_database_memory().await.expect("memory db");
+    let queue = ParseQueue::new(db.pool().clone());
+    queue.enqueue_document("doc-1", "sha-1", 1).await.unwrap();
+    assert_eq!(queue.claim("aionui", 1).await.unwrap().len(), 1);
+    assert!(queue.claim("aionui", 1).await.unwrap().is_empty());
+
+    queue.release_owner("other").await.unwrap();
+    assert!(queue.claim("aionui", 1).await.unwrap().is_empty());
+    queue.release_owner("aionui").await.unwrap();
+    assert_eq!(queue.claim("aionui", 1).await.unwrap().len(), 1);
+}
+
+fn worker_state(store: DocumentStore, queue: ParseQueue, dir: &std::path::Path) -> DocumentState {
+    DocumentState {
+        store,
+        queue,
+        lifecycle: std::sync::Arc::new(MinerULifecycle::new(dir.to_path_buf())),
+        routing: RoutingTable::default(),
+        parse_options: ParseOptions::default(),
+        desktop: true,
+        worker_running: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true)),
+        pause_reason: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
+    }
+}
+
+async fn run_worker_once<P: ParseProvider>(
+    provider: &P,
+    body: &str,
+) -> (aionui_documents::QueueProgress, Option<String>) {
+    let db = init_database_memory().await.expect("memory db");
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("note.txt");
+    std::fs::write(&path, body).unwrap();
+    let store = DocumentStore::new(db.pool().clone());
+    let doc = add_file(&store, "p", &path, IngestLimits::desktop()).await.unwrap();
+    let queue = ParseQueue::new(db.pool().clone());
+    queue
+        .enqueue_document(&doc.doc_id, &doc.sha256, doc.page_count)
+        .await
+        .unwrap();
+    let state = worker_state(store, queue, dir.path());
+    run_queue(&state, provider).await;
+    let progress = state.queue.progress(Some(&doc.doc_id)).await.unwrap();
+    let paused = state.pause_reason.lock().await.clone();
+    (progress, paused)
+}
+
+/// The worker is the whole of the orchestration: it takes a page, records it, and
+/// marks the queue done. When the engine is down it hands the page back with its
+/// retries intact and says why it stopped.
+#[tokio::test]
+async fn the_worker_finishes_a_page_and_releases_it_when_the_engine_is_down() {
+    let (done, paused) = run_worker_once(
+        &FakeProvider {
+            text: "TSN 29189".into(),
+        },
+        "TSN 29189",
+    )
+    .await;
+    assert_eq!(done.done, 1, "a page the engine read must leave the queue");
+    assert!(paused.is_none());
+
+    struct Down;
+    #[async_trait]
+    impl ParseProvider for Down {
+        async fn parse(&self, _request: &ParseRequest) -> Result<ReaderOutput, ProviderError> {
+            Err(ProviderError::Unavailable)
+        }
+    }
+    let (released, paused) = run_worker_once(&Down, "TSN 11111").await;
+    assert_eq!(released.pending, 1, "an engine outage hands the page back");
+    assert_eq!(released.failed, 0, "an engine outage must not spend a retry");
+    assert!(paused.is_some());
+}
+
+/// Releasing is not failing. The engine going down says nothing about the page,
+/// so it must not spend a retry.
+#[tokio::test]
+async fn releasing_a_page_does_not_charge_a_retry() {
+    let db = init_database_memory().await.expect("memory db");
+    let queue = ParseQueue::new(db.pool().clone());
+    queue.enqueue_document("doc-1", "sha-1", 1).await.unwrap();
+
+    for _ in 0..MAX_ATTEMPTS + 2 {
+        let task = queue.claim("worker-a", 1).await.unwrap();
+        assert_eq!(task.len(), 1);
+        assert_eq!(task[0].attempts, 0);
+        queue.release(&task[0].task_id).await.unwrap();
+    }
 }
 
 #[tokio::test]
@@ -93,13 +306,21 @@ async fn dual_readers_and_local_only() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("note.txt");
     std::fs::write(&path, "TSN 29189").unwrap();
-    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop()).await.unwrap();
+    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop())
+        .await
+        .unwrap();
     let provider = FakeProvider {
         text: "TSN 29189".into(),
     };
-    let report = parse_document(&store, &doc.doc_id, &provider, &RoutingTable::default())
-        .await
-        .unwrap();
+    let report = parse_document(
+        &store,
+        &doc.doc_id,
+        &provider,
+        &RoutingTable::default(),
+        ParseOptions::default(),
+    )
+    .await
+    .unwrap();
     assert_eq!(report.document.page_count, 1);
 
     struct RemoteOnly;
@@ -110,8 +331,26 @@ async fn dual_readers_and_local_only() {
             Err(ProviderError::Unavailable)
         }
     }
-    let denied = parse_document(&store, &doc.doc_id, &RemoteOnly, &RoutingTable::default()).await;
-    assert!(denied.unwrap_err().contains("not running"));
+    // The engine being down pauses the run; it is not an error and it does not
+    // throw away the pages already read.
+    let paused = parse_document(
+        &store,
+        &doc.doc_id,
+        &RemoteOnly,
+        &RoutingTable::default(),
+        ParseOptions {
+            force: true,
+            ..ParseOptions::default()
+        },
+    )
+    .await
+    .unwrap();
+    assert!(paused.paused.is_some_and(|reason| reason.contains("not running")));
+    let pages = store.list_pages(&doc.sha256).await.unwrap();
+    assert!(
+        pages.iter().all(|p| p.status != "failed"),
+        "a page the engine never saw must not be marked failed; got {pages:?}"
+    );
 }
 
 /// Regression test: a reader failure that is not `Unavailable`/`CloudDisabled`
@@ -126,7 +365,9 @@ async fn a_non_fatal_reader_failure_is_not_erased_right_after_being_recorded() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("note.txt");
     std::fs::write(&path, "TSN 29189").unwrap();
-    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop()).await.unwrap();
+    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop())
+        .await
+        .unwrap();
 
     struct FlakyProvider;
     #[async_trait]
@@ -136,13 +377,21 @@ async fn a_non_fatal_reader_failure_is_not_erased_right_after_being_recorded() {
         }
     }
 
-    parse_document(&store, &doc.doc_id, &FlakyProvider, &RoutingTable::default())
-        .await
-        .unwrap();
+    parse_document(
+        &store,
+        &doc.doc_id,
+        &FlakyProvider,
+        &RoutingTable::default(),
+        ParseOptions::default(),
+    )
+    .await
+    .unwrap();
 
     let issues = store.list_issues(&doc.sha256).await.unwrap();
     assert!(
-        issues.iter().any(|i| i.code == "render_failed" && i.detail.contains("malformed response")),
+        issues
+            .iter()
+            .any(|i| i.code == "render_failed" && i.detail.contains("malformed response")),
         "the reader's own failure detail must still be present after clear_issues; got {issues:?}"
     );
 }
@@ -208,7 +457,9 @@ async fn human_annotation_feeds_the_review_package() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("life.txt");
     std::fs::write(&path, "x").unwrap();
-    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop()).await.unwrap();
+    let doc = add_file(&store, "proj-a", &path, IngestLimits::desktop())
+        .await
+        .unwrap();
     annotate(
         &store,
         AnnotateRequest {
